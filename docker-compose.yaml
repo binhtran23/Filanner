@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  db:
+    build:
+      context: ./backend/app/db
+    container_name: filanner_db
+    user: root:root
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-filanner_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-filanner_password}
+      POSTGRES_DB: ${POSTGRES_DB:-filanner_db}
+    volumes:
+      - ./mnt/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-filanner_user}", "-d", "${POSTGRES_DB:-filanner_db}"]
+      interval: 5s
+      retries: 5
+    networks:
+      - filanner-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: filanner_backend
+    env_file:
+      - .env
+    environment:
+      POSTGRES_SERVER: db
+      POSTGRES_USER: ${POSTGRES_USER:-filanner_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-filanner_password}
+      POSTGRES_DB: ${POSTGRES_DB:-filanner_db}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - filanner-network
+    command: >
+      sh -c "
+        echo 'Waiting for database...' &&
+        sleep 10 &&
+        echo 'Initializing database...' &&
+        python -m app.db.init_db || echo 'Database already initialized' &&
+        echo 'Starting FastAPI server...' &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000
+      "
+
+networks:
+  filanner-network:
+    driver: bridge
