@@ -1,0 +1,18 @@
+Date,Name,Category,Amount,Type,IsRecurring
+,Tiền nhà,Nhà cửa,5000000,Expense,true
+,Điện,Tiện ích,500000,Expense,true
+,Nước,Tiện ích,100000,Expense,true
+,Internet,Tiện ích,200000,Expense,true
+,Điện thoại,Tiện ích,150000,Expense,true
+,Xăng xe,Di chuyển,800000,Expense,true
+,Bảo hiểm,Khác,500000,Expense,true
+01/01/2026,Cơm trưa văn phòng,Ăn uống,50000,Expense,false
+01/01/2026,Grab đi làm,Di chuyển,35000,Expense,false
+02/01/2026,Cafe sáng,Ăn uống,45000,Expense,false
+02/01/2026,Xem phim cuối tuần,Giải trí,180000,Expense,false
+03/01/2026,Mua quần áo,Mua sắm,500000,Expense,false
+04/01/2026,Tiệc sinh nhật bạn,Giải trí,300000,Expense,false
+05/01/2026,Lương tháng 1,Thu nhập,15000000,Income,false
+10/01/2026,Thưởng KPI,Thu nhập,2000000,Income,false
+15/01/2026,Siêu thị tuần,Ăn uống,800000,Expense,false
+20/01/2026,Khám bệnh,Y tế,350000,Expense,false
