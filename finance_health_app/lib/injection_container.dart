@@ -19,6 +19,7 @@ import 'data/datasources/local/personal_finance_local_datasource.dart';
 // Services
 import 'core/utils/plan_generator_service.dart';
 import 'core/utils/csv_parser_service.dart';
+import 'core/utils/personal_finance_csv_service.dart';
 
 // Repositories
 import 'domain/repositories/auth_repository.dart';
@@ -58,6 +59,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
   sl.registerLazySingleton(() => PlanGeneratorService());
   sl.registerLazySingleton(() => CsvParserService());
+  sl.registerLazySingleton(() => PersonalFinanceCsvService());
 
   //============================================================
   // Data Sources

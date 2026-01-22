@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/theme/colors.dart';
 import '../../../../core/constants/enums.dart';
+import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../blocs/finance_form/finance_form_bloc.dart';
 import '../../../blocs/finance_form/finance_form_event.dart';
@@ -11,17 +12,24 @@ import '../../../blocs/finance_form/finance_form_state.dart';
 
 /// Step 1: Thông tin người dùng
 class UserProfileStep extends StatefulWidget {
-  const UserProfileStep({super.key});
+  final VoidCallback? onImportCsv;
+
+  const UserProfileStep({super.key, this.onImportCsv});
 
   @override
-  State<UserProfileStep> createState() => _UserProfileStepState();
+  State<UserProfileStep> createState() => UserProfileStepState();
 }
 
-class _UserProfileStepState extends State<UserProfileStep> {
+class UserProfileStepState extends State<UserProfileStep> {
   final _formKey = GlobalKey<FormState>();
   final _ageController = TextEditingController();
   final _incomeController = TextEditingController();
   final _debtController = TextEditingController();
+
+  /// Validate form - return true if valid
+  bool validateForm() {
+    return _formKey.currentState?.validate() ?? false;
+  }
 
   @override
   void initState() {
@@ -29,17 +37,30 @@ class _UserProfileStepState extends State<UserProfileStep> {
     _initializeControllers();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Update controllers when state changes (e.g., from CSV import)
+    _initializeControllers();
+  }
+
   void _initializeControllers() {
     final state = context.read<FinanceFormBloc>().state;
     if (state is FinanceFormInProgress) {
-      if (state.age != null) {
+      if (state.age != null && _ageController.text != state.age.toString()) {
         _ageController.text = state.age.toString();
       }
       if (state.monthlyIncome != null) {
-        _incomeController.text = _formatNumber(state.monthlyIncome!);
+        final formatted = _formatNumber(state.monthlyIncome!);
+        if (_incomeController.text != formatted) {
+          _incomeController.text = formatted;
+        }
       }
       if (state.totalDebt != null) {
-        _debtController.text = _formatNumber(state.totalDebt!);
+        final formatted = _formatNumber(state.totalDebt!);
+        if (_debtController.text != formatted) {
+          _debtController.text = formatted;
+        }
       }
     }
   }
@@ -81,6 +102,79 @@ class _UserProfileStepState extends State<UserProfileStep> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Import CSV Card
+                Card(
+                  elevation: 0,
+                  color: AppColors.primary.withOpacity(0.1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: AppColors.primary.withOpacity(0.3)),
+                  ),
+                  child: InkWell(
+                    onTap: widget.onImportCsv,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.upload_file,
+                            color: AppColors.primary,
+                            size: 32,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Nhập từ file CSV',
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                      ),
+                                ),
+                                Text(
+                                  'Nếu bạn đã có file dữ liệu sẵn',
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: AppColors.textSecondary,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: AppColors.primary,
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Divider with text
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: AppColors.border)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Hoặc điền thủ công',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: AppColors.border)),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
                 // Header
                 Text(
                   'Thông tin cá nhân',
@@ -210,22 +304,12 @@ class _UserProfileStepState extends State<UserProfileStep> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      inputFormatters: [CurrencyInputFormatter()],
       validator: Validators.income,
       onChanged: (value) {
         final income = _parseNumber(value);
         if (income != null) {
           context.read<FinanceFormBloc>().add(UserProfileIncomeChanged(income));
-        }
-        // Format lại số
-        if (value.isNotEmpty) {
-          final formatted = _formatNumber(double.tryParse(value) ?? 0);
-          if (formatted != value) {
-            _incomeController.value = TextEditingValue(
-              text: formatted,
-              selection: TextSelection.collapsed(offset: formatted.length),
-            );
-          }
         }
       },
     );
@@ -295,7 +379,7 @@ class _UserProfileStepState extends State<UserProfileStep> {
                   ),
                 ),
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                inputFormatters: [CurrencyInputFormatter()],
                 validator: (value) =>
                     Validators.debt(value, hasDebt: state.hasDebt),
                 onChanged: (value) {
@@ -303,20 +387,6 @@ class _UserProfileStepState extends State<UserProfileStep> {
                   context.read<FinanceFormBloc>().add(
                     UserProfileTotalDebtChanged(debt),
                   );
-                  // Format lại số
-                  if (value.isNotEmpty) {
-                    final formatted = _formatNumber(
-                      double.tryParse(value) ?? 0,
-                    );
-                    if (formatted != value) {
-                      _debtController.value = TextEditingValue(
-                        text: formatted,
-                        selection: TextSelection.collapsed(
-                          offset: formatted.length,
-                        ),
-                      );
-                    }
-                  }
                 },
               ),
             ],

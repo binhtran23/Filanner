@@ -58,29 +58,9 @@ class FinanceFormBloc extends Bloc<FinanceFormEvent, FinanceFormState> {
   ) async {
     emit(const FinanceFormLoading());
 
-    try {
-      final savedData = await _localDataSource.getPersonalFinance();
-
-      if (savedData != null) {
-        emit(
-          FinanceFormInProgress(
-            age: savedData.userProfile.age,
-            occupation: savedData.userProfile.occupation,
-            maritalStatus: savedData.userProfile.maritalStatus,
-            monthlyIncome: savedData.userProfile.monthlyIncome,
-            hasDebt: savedData.userProfile.hasDebt,
-            totalDebt: savedData.userProfile.totalDebt,
-            mandatoryExpenses: savedData.mandatoryExpenses,
-            incidentalPercentage: savedData.incidentalExpense.percentage,
-            financialGoals: savedData.financialGoals,
-          ),
-        );
-      } else {
-        emit(const FinanceFormInProgress());
-      }
-    } catch (e) {
-      emit(const FinanceFormInProgress());
-    }
+    // Always start fresh - don't load old submitted data
+    await Future.delayed(const Duration(milliseconds: 100));
+    emit(const FinanceFormInProgress());
   }
 
   void _onStepChanged(
@@ -156,6 +136,10 @@ class FinanceFormBloc extends Bloc<FinanceFormEvent, FinanceFormState> {
       try {
         final personalFinance = currentState.toPersonalFinance()!;
         await _localDataSource.savePersonalFinance(personalFinance);
+
+        // Clear draft after successful submission
+        await _localDataSource.clearFormDraft();
+
         emit(FinanceFormSubmitSuccess(personalFinance));
       } catch (e) {
         emit(

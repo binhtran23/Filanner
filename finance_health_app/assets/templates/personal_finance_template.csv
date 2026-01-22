@@ -1,0 +1,30 @@
+# PERSONAL FINANCE TEMPLATE
+# Format: Section,Field,Value
+# Instructions: Fill in the Value column. Do not modify Section and Field columns.
+# Date format: DD/MM/YYYY
+
+# USER PROFILE
+USER_PROFILE,Age,25
+USER_PROFILE,Occupation,Nhân viên văn phòng
+USER_PROFILE,MaritalStatus,single
+USER_PROFILE,MonthlyIncome,15000000
+USER_PROFILE,HasDebt,false
+USER_PROFILE,TotalDebt,0
+
+# MANDATORY EXPENSES (Format: Name,Amount,Frequency,Note)
+# Frequency: daily, weekly, monthly
+MANDATORY_EXPENSE,Tiền nhà,5000000,monthly,
+MANDATORY_EXPENSE,Điện nước,700000,monthly,
+MANDATORY_EXPENSE,Internet,200000,monthly,
+MANDATORY_EXPENSE,Xăng xe,800000,monthly,
+MANDATORY_EXPENSE,Ăn sáng,50000,daily,
+
+# INCIDENTAL EXPENSE
+INCIDENTAL_EXPENSE,Percentage,15
+
+# FINANCIAL GOALS (Format: Type,CustomName,TargetAmount,TargetDate,Priority)
+# Type: emergencySavings, buyHouse, buyCar, travel, retirement, investment, payDebt, childEducation, wedding, business, other
+# Priority: 1-5 (1=highest)
+FINANCIAL_GOAL,emergencySavings,,10000000,31/12/2026,1
+FINANCIAL_GOAL,travel,Du lịch Nhật Bản,20000000,15/06/2026,3
+FINANCIAL_GOAL,other,Mua laptop mới,15000000,30/03/2026,2

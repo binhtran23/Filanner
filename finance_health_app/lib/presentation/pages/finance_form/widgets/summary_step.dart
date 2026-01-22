@@ -1,8 +1,16 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../../../../app/theme/colors.dart';
+import '../../../../core/utils/personal_finance_csv_service.dart';
 import '../../../blocs/finance_form/finance_form_bloc.dart';
+import '../../../blocs/finance_form/finance_form_event.dart';
 import '../../../blocs/finance_form/finance_form_state.dart';
 
 /// Step 5: Tổng kết và xác nhận
@@ -36,6 +44,34 @@ class SummaryStep extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
+              ),
+              const SizedBox(height: 16),
+
+              // Import/Export buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _importFromCsv(context),
+                      icon: const Icon(Icons.upload_file),
+                      label: const Text('Import CSV'),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _exportToCsv(context, state),
+                      icon: const Icon(Icons.download),
+                      label: const Text('Export CSV'),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
 
@@ -495,6 +531,160 @@ class SummaryStep extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // Import from CSV
+  Future<void> _importFromCsv(BuildContext context) async {
+    try {
+      // Pick file
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['csv'],
+        withData: true,
+      );
+
+      if (result == null || result.files.isEmpty) return;
+
+      final fileBytes = result.files.first.bytes;
+      if (fileBytes == null) {
+        throw Exception('Không thể đọc file');
+      }
+
+      final csvContent = utf8.decode(fileBytes);
+
+      // Parse CSV
+      final csvService = PersonalFinanceCsvService();
+      final personalFinance = await csvService.importFromCsv(csvContent);
+
+      if (!context.mounted) return;
+
+      // Reset form first to clear existing data
+      final bloc = context.read<FinanceFormBloc>();
+      bloc.add(const FinanceFormReset());
+
+      // Wait a bit for reset to complete
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Populate form with imported data
+      // User Profile
+      bloc.add(UserProfileAgeChanged(personalFinance.userProfile.age));
+      bloc.add(
+        UserProfileOccupationChanged(personalFinance.userProfile.occupation),
+      );
+      bloc.add(
+        UserProfileMaritalStatusChanged(
+          personalFinance.userProfile.maritalStatus,
+        ),
+      );
+      bloc.add(
+        UserProfileIncomeChanged(personalFinance.userProfile.monthlyIncome),
+      );
+      bloc.add(UserProfileHasDebtChanged(personalFinance.userProfile.hasDebt));
+      if (personalFinance.userProfile.totalDebt != null) {
+        bloc.add(
+          UserProfileTotalDebtChanged(personalFinance.userProfile.totalDebt),
+        );
+      }
+
+      // Mandatory Expenses
+      for (var expense in personalFinance.mandatoryExpenses) {
+        bloc.add(MandatoryExpenseAdded(expense));
+      }
+
+      // Incidental Expense
+      bloc.add(
+        IncidentalPercentageChanged(
+          personalFinance.incidentalExpense.percentage,
+        ),
+      );
+
+      // Financial Goals
+      for (var goal in personalFinance.financialGoals) {
+        bloc.add(FinancialGoalAdded(goal));
+      }
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Import thành công! Vui lòng kiểm tra lại thông tin.',
+            ),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi khi import CSV: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  // Export to CSV
+  Future<void> _exportToCsv(
+    BuildContext context,
+    FinanceFormInProgress state,
+  ) async {
+    try {
+      // Convert state to PersonalFinance
+      final personalFinance = state.toPersonalFinance();
+      if (personalFinance == null) {
+        throw Exception('Điền đầy đủ thông tin trước khi export');
+      }
+
+      // Generate CSV using service
+      final csvService = PersonalFinanceCsvService();
+      final csv = csvService.exportToCsv(personalFinance);
+
+      final fileName =
+          'personal_finance_${DateTime.now().millisecondsSinceEpoch}.csv';
+
+      if (kIsWeb) {
+        // Web: Download using share_plus
+        await Share.share(csv, subject: 'Personal Finance Data');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('File CSV đã sẵn sàng. Vui lòng lưu lại.'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        }
+      } else {
+        // Mobile/Desktop: Save to file and share
+        final directory = await getApplicationDocumentsDirectory();
+        final filePath = '${directory.path}/$fileName';
+        final file = File(filePath);
+        await file.writeAsString(csv, encoding: utf8);
+
+        await Share.shareXFiles([
+          XFile(filePath),
+        ], subject: 'Personal Finance Data');
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Export thành công: $fileName'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi khi xuất CSV: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 
   String _formatCurrency(double amount) {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/theme/colors.dart';
 import '../../../../core/constants/enums.dart';
+import '../../../../core/utils/currency_formatter.dart';
 import '../../../../domain/entities/mandatory_expense.dart';
 import '../../../blocs/finance_form/finance_form_bloc.dart';
 import '../../../blocs/finance_form/finance_form_event.dart';
@@ -393,7 +393,9 @@ class _ExpenseFormSheetState extends State<_ExpenseFormSheet> {
     super.initState();
     _nameController = TextEditingController(text: widget.expense?.name);
     _amountController = TextEditingController(
-      text: widget.expense?.estimatedAmount.toStringAsFixed(0),
+      text: widget.expense != null
+          ? formatNumberToVnd(widget.expense!.estimatedAmount)
+          : null,
     );
     _noteController = TextEditingController(text: widget.expense?.note);
     _selectedFrequency = widget.expense?.frequency ?? ExpenseFrequency.monthly;
@@ -409,12 +411,13 @@ class _ExpenseFormSheetState extends State<_ExpenseFormSheet> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
+      final cleanAmount = parseVndToNumber(_amountController.text);
       final expense = MandatoryExpense(
         id:
             widget.expense?.id ??
             DateTime.now().millisecondsSinceEpoch.toString(),
         name: _nameController.text.trim(),
-        estimatedAmount: double.parse(_amountController.text),
+        estimatedAmount: double.parse(cleanAmount),
         frequency: _selectedFrequency,
         note: _noteController.text.trim().isEmpty
             ? null
@@ -507,12 +510,13 @@ class _ExpenseFormSheetState extends State<_ExpenseFormSheet> {
                   ),
                 ),
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                inputFormatters: [CurrencyInputFormatter()],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Vui lòng nhập số tiền';
                   }
-                  final amount = double.tryParse(value);
+                  final cleanValue = parseVndToNumber(value);
+                  final amount = double.tryParse(cleanValue);
                   if (amount == null || amount <= 0) {
                     return 'Số tiền phải lớn hơn 0';
                   }

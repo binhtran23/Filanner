@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../../../app/theme/colors.dart';
+import '../../../core/utils/personal_finance_csv_service.dart';
 import '../../../data/datasources/local/personal_finance_local_datasource.dart';
 import '../../../injection_container.dart';
 import '../../blocs/finance_form/finance_form_bloc.dart';
@@ -44,6 +46,7 @@ class _FinanceFormView extends StatefulWidget {
 
 class _FinanceFormViewState extends State<_FinanceFormView> {
   final PageController _pageController = PageController();
+  final _userProfileStepKey = GlobalKey<UserProfileStepState>();
 
   final List<String> _stepTitles = [
     'Thông tin cá nhân',
@@ -77,6 +80,21 @@ class _FinanceFormViewState extends State<_FinanceFormView> {
   }
 
   void _nextStep(FinanceFormInProgress state) {
+    // Validate current step before proceeding
+    if (state.currentStep == 0) {
+      // Validate step 1
+      final isValid = _userProfileStepKey.currentState?.validateForm() ?? false;
+      if (!isValid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Vui lòng điền đầy đủ thông tin bắt buộc'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+        return;
+      }
+    }
+
     if (state.currentStep < state.totalSteps - 1) {
       _goToStep(state.currentStep + 1);
     }
@@ -122,60 +140,70 @@ class _FinanceFormViewState extends State<_FinanceFormView> {
           );
         }
 
-        if (state is! FinanceFormInProgress) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+        // Keep showing form even on SubmitSuccess (dialog will handle navigation)
+        if (state is FinanceFormInProgress ||
+            state is FinanceFormSubmitSuccess) {
+          final formState = state is FinanceFormInProgress
+              ? state
+              : const FinanceFormInProgress();
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(_stepTitles[formState.currentStep]),
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => _showExitConfirmation(context),
+              ),
+              actions: [
+                // Save draft button
+                IconButton(
+                  icon: const Icon(Icons.save_outlined),
+                  onPressed: () {
+                    context.read<FinanceFormBloc>().add(
+                      const FinanceFormSaved(),
+                    );
+                  },
+                  tooltip: 'Lưu tạm',
+                ),
+              ],
+            ),
+            body: Column(
+              children: [
+                // Progress Indicator
+                _buildProgressIndicator(formState),
+
+                // Step Content
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    onPageChanged: (index) {
+                      context.read<FinanceFormBloc>().add(
+                        FinanceFormStepChanged(index),
+                      );
+                    },
+                    children: [
+                      UserProfileStep(
+                        key: _userProfileStepKey,
+                        onImportCsv: importFromCsv,
+                      ),
+                      const MandatoryExpensesStep(),
+                      IncidentalExpenseStep(),
+                      FinancialGoalsStep(),
+                      SummaryStep(),
+                    ],
+                  ),
+                ),
+
+                // Navigation Buttons
+                _buildNavigationButtons(formState),
+              ],
+            ),
           );
         }
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(_stepTitles[state.currentStep]),
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => _showExitConfirmation(context),
-            ),
-            actions: [
-              // Save draft button
-              IconButton(
-                icon: const Icon(Icons.save_outlined),
-                onPressed: () {
-                  context.read<FinanceFormBloc>().add(const FinanceFormSaved());
-                },
-                tooltip: 'Lưu tạm',
-              ),
-            ],
-          ),
-          body: Column(
-            children: [
-              // Progress Indicator
-              _buildProgressIndicator(state),
-
-              // Step Content
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  onPageChanged: (index) {
-                    context.read<FinanceFormBloc>().add(
-                      FinanceFormStepChanged(index),
-                    );
-                  },
-                  children: const [
-                    UserProfileStep(),
-                    MandatoryExpensesStep(),
-                    IncidentalExpenseStep(),
-                    FinancialGoalsStep(),
-                    SummaryStep(),
-                  ],
-                ),
-              ),
-
-              // Navigation Buttons
-              _buildNavigationButtons(state),
-            ],
-          ),
-        );
+        // Fallback for other states
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       },
     );
   }
@@ -342,6 +370,95 @@ class _FinanceFormViewState extends State<_FinanceFormView> {
     );
   }
 
+  Future<void> importFromCsv() async {
+    try {
+      // Pick CSV file
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['csv'],
+      );
+
+      if (result == null || result.files.isEmpty) return;
+
+      final file = result.files.first;
+      if (file.bytes == null) {
+        throw Exception('Không thể đọc file');
+      }
+
+      // Parse CSV
+      final csvContent = String.fromCharCodes(file.bytes!);
+      final csvService = sl<PersonalFinanceCsvService>();
+      final personalFinance = await csvService.importFromCsv(csvContent);
+
+      if (!mounted) return;
+
+      // Reset form first
+      context.read<FinanceFormBloc>().add(const FinanceFormReset());
+
+      // Wait for reset to complete
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      if (!mounted) return;
+
+      final bloc = context.read<FinanceFormBloc>();
+
+      // Populate form from imported data
+      // Step 1: User Profile
+      bloc.add(UserProfileAgeChanged(personalFinance.userProfile.age));
+      bloc.add(
+        UserProfileOccupationChanged(personalFinance.userProfile.occupation),
+      );
+      bloc.add(
+        UserProfileMaritalStatusChanged(
+          personalFinance.userProfile.maritalStatus,
+        ),
+      );
+      bloc.add(
+        UserProfileIncomeChanged(personalFinance.userProfile.monthlyIncome),
+      );
+      bloc.add(UserProfileHasDebtChanged(personalFinance.userProfile.hasDebt));
+      if (personalFinance.userProfile.totalDebt != null) {
+        bloc.add(
+          UserProfileTotalDebtChanged(personalFinance.userProfile.totalDebt),
+        );
+      }
+
+      // Step 2: Mandatory Expenses
+      for (final expense in personalFinance.mandatoryExpenses) {
+        bloc.add(MandatoryExpenseAdded(expense));
+      }
+
+      // Step 3: Incidental Percentage
+      bloc.add(
+        IncidentalPercentageChanged(
+          personalFinance.incidentalExpense.percentage,
+        ),
+      );
+
+      // Step 4: Financial Goals
+      for (final goal in personalFinance.financialGoals) {
+        bloc.add(FinancialGoalAdded(goal));
+      }
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Đã nhập dữ liệu từ CSV thành công'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Lỗi khi nhập CSV: $e'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
+
   void _showExitConfirmation(BuildContext context) {
     showDialog(
       context: context,
@@ -376,33 +493,42 @@ class _FinanceFormViewState extends State<_FinanceFormView> {
   }
 
   void _showSuccessDialog(BuildContext context) {
+    // Save context reference before showing dialog
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final goRouter = GoRouter.of(context);
+
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        icon: const Icon(
-          Icons.check_circle,
-          color: AppColors.success,
-          size: 64,
-        ),
-        title: const Text('Thành công!'),
-        content: const Text(
-          'Thông tin tài chính của bạn đã được lưu.\n'
-          'Bây giờ bạn có thể xem phân tích và gợi ý tiết kiệm.',
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              context.go('/home');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.success,
-              minimumSize: const Size(double.infinity, 48),
-            ),
-            child: const Text('Về trang chủ'),
+      builder: (dialogContext) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          icon: const Icon(
+            Icons.check_circle,
+            color: AppColors.success,
+            size: 64,
           ),
-        ],
+          title: const Text('Thành công!'),
+          content: const Text(
+            'Thông tin tài chính của bạn đã được lưu.\n'
+            'Bây giờ bạn có thể xem phân tích và gợi ý tiết kiệm.',
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                // Close dialog first using saved navigator
+                Navigator.of(dialogContext).pop();
+                // Navigate to home using saved router
+                goRouter.go('/home');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.success,
+                minimumSize: const Size(double.infinity, 48),
+              ),
+              child: const Text('Về trang chủ'),
+            ),
+          ],
+        ),
       ),
     );
   }

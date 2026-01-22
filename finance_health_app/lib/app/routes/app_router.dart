@@ -8,7 +8,6 @@ import '../../presentation/blocs/auth/auth_state.dart';
 import '../../presentation/pages/splash/splash_page.dart';
 import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
-import '../../presentation/pages/onboarding/onboarding_page.dart';
 import '../../presentation/pages/home/home_page.dart';
 import '../../presentation/pages/profile/profile_page.dart';
 import '../../presentation/pages/finance_form/finance_form_page.dart';
@@ -101,11 +100,11 @@ class AppRouter {
           builder: (context, state) => const RegisterPage(),
         ),
 
-        // Onboarding
+        // Onboarding - Redirect to financial form
         GoRoute(
           path: AppRoutes.onboarding,
           name: 'onboarding',
-          builder: (context, state) => const OnboardingPage(),
+          redirect: (context, state) => AppRoutes.financialForm,
         ),
 
         // Main routes (authenticated)
