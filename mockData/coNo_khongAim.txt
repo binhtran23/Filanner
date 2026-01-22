@@ -1,0 +1,217 @@
+{
+  "status": "success",
+  "data": {
+    "meta": {
+      "currency": "VND",
+      "period": "WEEKLY",
+      "week_label": "Kế hoạch tuần (Tập trung trả nợ)"
+    },
+    "overview": {
+      "total_income_weekly": 7000000,
+      "total_expense_planned": 4000000,
+      "remaining_balance": 3000000,
+      "financial_health_status": "DEBT_RECOVERY",
+      "advice": "Cảnh báo: Bạn đang trong giai đoạn trả nợ tập trung. Hãy cắt giảm tối đa các khoản giải trí để dồn 3.000.000đ này xóa nợ xấu (Thẻ tín dụng/Vay nóng) ngay."
+    },
+    "allocation_tree": [
+      {
+        "id": "CAT_DEBT_PRIORITY",
+        "label": "Trả nợ (Ưu tiên tuyệt đối)",
+        "total": 3000000,
+        "percentage": 42.8,
+        "color": "#722ED1",
+        "children": [
+          {
+            "id": "ITEM_DEBT_CREDIT",
+            "label": "Dư nợ Thẻ tín dụng",
+            "amount": 2000000,
+            "frequency": "WEEKLY",
+            "note": "Trả ngay để giảm lãi"
+          },
+          {
+            "id": "ITEM_DEBT_INSTALLMENT",
+            "label": "Trả góp điện thoại",
+            "amount": 1000000,
+            "frequency": "WEEKLY",
+            "note": "Khoản cố định"
+          }
+        ]
+      },
+      {
+        "id": "CAT_MANDATORY_STRICT",
+        "label": "Sinh hoạt phí (Thắt lưng buộc bụng)",
+        "total": 3500000,
+        "percentage": 50.0,
+        "color": "#FF4D4F",
+        "children": [
+          {
+            "id": "ITEM_RENT_BILLS",
+            "label": "Nhà & Hóa đơn",
+            "amount": 1500000,
+            "frequency": "MONTHLY_ALLOCATION",
+            "note": "Trích lập bắt buộc"
+          },
+          {
+            "id": "ITEM_FOOD_BASIC",
+            "label": "Ăn uống cơ bản (Tự nấu)",
+            "amount": 1400000,
+            "frequency": "DAILY",
+            "note": "200k/ngày"
+          },
+          {
+            "id": "ITEM_FUEL",
+            "label": "Xăng xe / Đi lại",
+            "amount": 600000,
+            "frequency": "WEEKLY",
+            "note": "Hạn chế di chuyển thừa"
+          }
+        ]
+      },
+      {
+        "id": "CAT_EMERGENCY_MIN",
+        "label": "Dự phòng tối thiểu",
+        "total": 500000,
+        "percentage": 7.2,
+        "color": "#8C8C8C",
+        "children": [
+          {
+            "id": "ITEM_MEDICINE",
+            "label": "Thuốc men / Hư xe",
+            "amount": 500000,
+            "frequency": "WEEKLY",
+            "note": "Chỉ dùng khi cấp bách"
+          }
+        ]
+      }
+    ],
+    "daily_schedule": [
+      {
+        "day_index": 1,
+        "day_label": "Thứ Hai",
+        "daily_total": 3200000,
+        "activities": [
+          {
+            "category_id": "CAT_DEBT_PRIORITY",
+            "item_label": "Thanh toán thẻ tín dụng",
+            "amount": 2000000,
+            "is_done": false
+          },
+          {
+            "category_id": "CAT_DEBT_PRIORITY",
+            "item_label": "Đóng tiền trả góp",
+            "amount": 1000000,
+            "is_done": false
+          },
+          {
+            "category_id": "CAT_MANDATORY_STRICT",
+            "item_label": "Đi chợ / Ăn uống",
+            "amount": 200000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 2,
+        "day_label": "Thứ Ba",
+        "daily_total": 200000,
+        "activities": [
+          {
+            "category_id": "CAT_MANDATORY_STRICT",
+            "item_label": "Ăn uống tiết kiệm",
+            "amount": 200000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 3,
+        "day_label": "Thứ Tư",
+        "daily_total": 500000,
+        "activities": [
+          {
+            "category_id": "CAT_MANDATORY_STRICT",
+            "item_label": "Ăn uống tiết kiệm",
+            "amount": 200000,
+            "is_done": false
+          },
+          {
+            "category_id": "CAT_MANDATORY_STRICT",
+            "item_label": "Đổ xăng giữa tuần",
+            "amount": 300000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 4,
+        "day_label": "Thứ Năm",
+        "daily_total": 200000,
+        "activities": [
+          {
+            "category_id": "CAT_MANDATORY_STRICT",
+            "item_label": "Ăn uống tiết kiệm",
+            "amount": 200000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 5,
+        "day_label": "Thứ Sáu",
+        "daily_total": 200000,
+        "activities": [
+          {
+            "category_id": "CAT_MANDATORY_STRICT",
+            "item_label": "Ăn uống tiết kiệm",
+            "amount": 200000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 6,
+        "day_label": "Thứ Bảy",
+        "daily_total": 500000,
+        "activities": [
+          {
+            "category_id": "CAT_MANDATORY_STRICT",
+            "item_label": "Ăn uống",
+            "amount": 200000,
+            "is_done": false
+          },
+           {
+            "category_id": "CAT_MANDATORY_STRICT",
+            "item_label": "Đổ xăng tuần sau",
+            "amount": 300000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 7,
+        "day_label": "Chủ Nhật",
+        "daily_total": 2200000,
+        "activities": [
+          {
+            "category_id": "CAT_MANDATORY_STRICT",
+            "item_label": "Ăn uống",
+            "amount": 200000,
+            "is_done": false
+          },
+          {
+            "category_id": "CAT_MANDATORY_STRICT",
+            "item_label": "Cất tiền Nhà & Hóa đơn (Không được tiêu)",
+            "amount": 1500000,
+            "is_done": false
+          },
+          {
+            "category_id": "CAT_EMERGENCY_MIN",
+            "item_label": "Tổng kết dư (bỏ lợn hoặc trả nợ thêm)",
+            "amount": 500000,
+            "is_done": false
+          }
+        ]
+      }
+    ]
+  }
+}

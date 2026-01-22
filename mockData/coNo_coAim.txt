@@ -1,0 +1,211 @@
+{
+  "status": "success",
+  "data": {
+    "meta": {
+      "currency": "VND",
+      "period": "WEEKLY",
+      "week_label": "Kế hoạch tuần (Cân bằng Nợ & Mục tiêu)"
+    },
+    "overview": {
+      "total_income_weekly": 7000000,
+      "total_expense_planned": 3500000,
+      "remaining_balance": 3500000,
+      "financial_health_status": "BALANCED_RECOVERY",
+      "advice": "Thử thách lớn: Bạn đang dùng 30% thu nhập trả nợ và 20% cho mục tiêu đổi xe. Hãy kiên nhẫn, đừng cắt phần trả nợ để bù vào mục tiêu."
+    },
+    "allocation_tree": [
+      {
+        "id": "CAT_DEBT",
+        "label": "Nghĩa vụ Trả nợ (Quá khứ)",
+        "total": 2100000,
+        "percentage": 30.0,
+        "color": "#722ED1",
+        "children": [
+          {
+            "id": "ITEM_DEBT_FIXED",
+            "label": "Trả góp Laptop",
+            "amount": 1000000,
+            "frequency": "WEEKLY",
+            "note": "Cố định hàng tháng"
+          },
+          {
+            "id": "ITEM_DEBT_CREDIT",
+            "label": "Thanh toán thẻ tối thiểu",
+            "amount": 1100000,
+            "frequency": "WEEKLY",
+            "note": "Tránh phí phạt chậm trả"
+          }
+        ]
+      },
+      {
+        "id": "CAT_GOAL",
+        "label": "Mục tiêu: Đổi Xe (Tương lai)",
+        "total": 1400000,
+        "percentage": 20.0,
+        "color": "#00B96B",
+        "children": [
+          {
+            "id": "ITEM_GOAL_VEHICLE",
+            "label": "Quỹ đổi xe máy",
+            "amount": 1400000,
+            "frequency": "WEEKLY",
+            "note": "Tiết kiệm tích lũy"
+          }
+        ]
+      },
+      {
+        "id": "CAT_LIVING",
+        "label": "Sinh hoạt phí",
+        "total": 3500000,
+        "percentage": 50.0,
+        "color": "#FAAD14",
+        "children": [
+          {
+            "id": "ITEM_RENT_ALLOC",
+            "label": "Tiền nhà (Trích lập)",
+            "amount": 1200000,
+            "frequency": "MONTHLY_ALLOCATION",
+            "note": "Trích tuần"
+          },
+          {
+            "id": "ITEM_FOOD_TRANSPORT",
+            "label": "Ăn uống & Xăng xe",
+            "amount": 1750000,
+            "frequency": "DAILY",
+            "note": "250k/ngày"
+          },
+           {
+            "id": "ITEM_BUFFER",
+            "label": "Dự phòng nhỏ",
+            "amount": 550000,
+            "frequency": "WEEKLY",
+            "note": "Cho đám cưới/sinh nhật"
+          }
+        ]
+      }
+    ],
+    "daily_schedule": [
+      {
+        "day_index": 1,
+        "day_label": "Thứ Hai",
+        "daily_total": 3750000,
+        "activities": [
+          {
+            "category_id": "CAT_DEBT",
+            "item_label": "Chuyển tiền trả nợ (Ưu tiên 1)",
+            "amount": 2100000,
+            "is_done": false
+          },
+          {
+            "category_id": "CAT_GOAL",
+            "item_label": "Gửi vào quỹ Đổi Xe (Ưu tiên 2)",
+            "amount": 1400000,
+            "is_done": false
+          },
+          {
+            "category_id": "CAT_LIVING",
+            "item_label": "Ăn uống",
+            "amount": 250000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 2,
+        "day_label": "Thứ Ba",
+        "daily_total": 250000,
+        "activities": [
+          {
+            "category_id": "CAT_LIVING",
+            "item_label": "Ăn uống & Xăng",
+            "amount": 250000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 3,
+        "day_label": "Thứ Tư",
+        "daily_total": 250000,
+        "activities": [
+          {
+            "category_id": "CAT_LIVING",
+            "item_label": "Ăn uống",
+            "amount": 250000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 4,
+        "day_label": "Thứ Năm",
+        "daily_total": 250000,
+        "activities": [
+          {
+            "category_id": "CAT_LIVING",
+            "item_label": "Ăn uống",
+            "amount": 250000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 5,
+        "day_label": "Thứ Sáu",
+        "daily_total": 250000,
+        "activities": [
+          {
+            "category_id": "CAT_LIVING",
+            "item_label": "Ăn uống",
+            "amount": 250000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 6,
+        "day_label": "Thứ Bảy",
+        "daily_total": 500000,
+        "activities": [
+          {
+            "category_id": "CAT_LIVING",
+            "item_label": "Ăn uống cuối tuần",
+            "amount": 250000,
+            "is_done": false
+          },
+           {
+            "category_id": "CAT_LIVING",
+            "item_label": "Dự phòng (Đám cưới/Cafe)",
+            "amount": 250000,
+            "is_done": false
+          }
+        ]
+      },
+      {
+        "day_index": 7,
+        "day_label": "Chủ Nhật",
+        "daily_total": 1750000,
+        "activities": [
+          {
+            "category_id": "CAT_LIVING",
+            "item_label": "Ăn uống cuối tuần",
+            "amount": 250000,
+            "is_done": false
+          },
+          {
+            "category_id": "CAT_LIVING",
+            "item_label": "Dự phòng còn lại",
+            "amount": 300000,
+            "is_done": false
+          },
+          {
+            "category_id": "CAT_LIVING",
+            "item_label": "Cất tiền Nhà & Hóa đơn",
+            "amount": 1200000,
+            "is_done": false
+          }
+        ]
+      }
+    ]
+  }
+}
