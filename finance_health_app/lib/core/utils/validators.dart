@@ -190,4 +190,134 @@ class Validators {
 
     return null;
   }
+
+  /// Validate phần trăm chi tiêu phát sinh (0 < % ≤ 100)
+  static String? incidentalPercentage(String? value, {String? fieldName}) {
+    if (value == null || value.isEmpty) {
+      return 'Vui lòng nhập ${fieldName ?? 'phần trăm chi tiêu phát sinh'}';
+    }
+
+    final number = double.tryParse(value);
+    if (number == null) {
+      return 'Vui lòng nhập số hợp lệ';
+    }
+
+    if (number <= 0) {
+      return 'Phần trăm phải lớn hơn 0';
+    }
+
+    if (number > 100) {
+      return 'Phần trăm không được vượt quá 100';
+    }
+
+    return null;
+  }
+
+  /// Validate thu nhập (phải > 0)
+  static String? income(String? value, {String? fieldName}) {
+    if (value == null || value.isEmpty) {
+      return 'Vui lòng nhập ${fieldName ?? 'thu nhập'}';
+    }
+
+    // Loại bỏ dấu phẩy và khoảng trắng
+    final cleanValue = value.replaceAll(RegExp(r'[,\s.]'), '');
+
+    final number = double.tryParse(cleanValue);
+    if (number == null) {
+      return 'Vui lòng nhập số hợp lệ';
+    }
+
+    if (number <= 0) {
+      return 'Thu nhập phải lớn hơn 0';
+    }
+
+    return null;
+  }
+
+  /// Validate số tiền chi tiêu (phải > 0)
+  static String? expense(String? value, {String? fieldName}) {
+    if (value == null || value.isEmpty) {
+      return 'Vui lòng nhập ${fieldName ?? 'số tiền chi tiêu'}';
+    }
+
+    // Loại bỏ dấu phẩy và khoảng trắng
+    final cleanValue = value.replaceAll(RegExp(r'[,\s.]'), '');
+
+    final number = double.tryParse(cleanValue);
+    if (number == null) {
+      return 'Vui lòng nhập số hợp lệ';
+    }
+
+    if (number <= 0) {
+      return 'Số tiền phải lớn hơn 0';
+    }
+
+    return null;
+  }
+
+  /// Validate nợ - nếu hasDebt = true thì totalDebt phải > 0
+  static String? debt(String? value, {required bool hasDebt}) {
+    if (!hasDebt) {
+      return null; // Không yêu cầu nếu không có nợ
+    }
+
+    if (value == null || value.isEmpty) {
+      return 'Vui lòng nhập tổng số nợ';
+    }
+
+    // Loại bỏ dấu phẩy và khoảng trắng
+    final cleanValue = value.replaceAll(RegExp(r'[,\s.]'), '');
+
+    final number = double.tryParse(cleanValue);
+    if (number == null) {
+      return 'Vui lòng nhập số hợp lệ';
+    }
+
+    if (number <= 0) {
+      return 'Tổng nợ phải lớn hơn 0';
+    }
+
+    return null;
+  }
+
+  /// Validate tên chi tiêu
+  static String? expenseName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Vui lòng nhập tên chi tiêu';
+    }
+
+    if (value.length < 2) {
+      return 'Tên chi tiêu phải có ít nhất 2 ký tự';
+    }
+
+    if (value.length > 100) {
+      return 'Tên chi tiêu không được quá 100 ký tự';
+    }
+
+    return null;
+  }
+
+  /// Validate tổng chi tiêu không vượt quá thu nhập
+  static String? totalExpenses({
+    required double totalExpenses,
+    required double monthlyIncome,
+  }) {
+    if (totalExpenses > monthlyIncome) {
+      return 'Tổng chi tiêu (${_formatCurrency(totalExpenses)}) vượt quá thu nhập (${_formatCurrency(monthlyIncome)})';
+    }
+    return null;
+  }
+
+  /// Helper để format tiền
+  static String _formatCurrency(double amount) {
+    return '${amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}₫';
+  }
+
+  /// Validate danh sách chi tiêu bắt buộc (phải có ít nhất 1)
+  static String? mandatoryExpensesList(int count) {
+    if (count == 0) {
+      return 'Phải có ít nhất 1 khoản chi tiêu bắt buộc';
+    }
+    return null;
+  }
 }

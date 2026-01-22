@@ -11,7 +11,7 @@ import '../../presentation/pages/auth/register_page.dart';
 import '../../presentation/pages/onboarding/onboarding_page.dart';
 import '../../presentation/pages/home/home_page.dart';
 import '../../presentation/pages/profile/profile_page.dart';
-import '../../presentation/pages/profile/financial_form_page.dart';
+import '../../presentation/pages/finance_form/finance_form_page.dart';
 import '../../presentation/pages/planner/planner_page.dart';
 import '../../presentation/pages/chat/chat_page.dart';
 import '../../presentation/pages/progress/progress_page.dart';

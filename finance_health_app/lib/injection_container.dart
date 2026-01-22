@@ -14,6 +14,7 @@ import 'data/datasources/remote/planner_remote_datasource.dart';
 import 'data/datasources/remote/chat_remote_datasource.dart';
 import 'data/datasources/remote/export_remote_datasource.dart';
 import 'data/datasources/local/auth_local_datasource.dart';
+import 'data/datasources/local/personal_finance_local_datasource.dart';
 
 // Services
 import 'core/utils/plan_generator_service.dart';
@@ -85,6 +86,9 @@ Future<void> initDependencies() async {
   // Local
   sl.registerLazySingleton<AuthLocalDataSource>(
     () => AuthLocalDataSourceImpl(secureStorage: sl(), sharedPreferences: sl()),
+  );
+  sl.registerLazySingleton<PersonalFinanceLocalDataSource>(
+    () => PersonalFinanceLocalDataSourceImpl(prefs: sl()),
   );
 
   //============================================================
