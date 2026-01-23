@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
@@ -9,6 +10,7 @@ import '../../blocs/auth/auth_state.dart';
 import '../../blocs/profile/profile_bloc.dart';
 import '../../../app/routes/app_router.dart';
 import '../../../app/theme/colors.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/plan_generator_service.dart';
 import '../../../injection_container.dart' as di;
 
@@ -34,11 +36,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
-        if (state is ProfileError && state.message.contains('Chưa có hồ sơ')) {
-          // No profile, redirect to onboarding
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.go(AppRoutes.onboarding);
-          });
+        if (state is ProfileNotFound) {
+          final prefs = di.sl<SharedPreferences>();
+          final onboardingDone =
+              prefs.getBool(AppConstants.onboardingKey) ?? false;
+
+          if (!onboardingDone) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.go(AppRoutes.onboarding);
+            });
+          }
         }
       },
       child: Scaffold(
@@ -91,8 +98,7 @@ class _HomePageState extends State<HomePage> {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (profileState is ProfileError &&
-                !profileState.message.contains('Chưa có hồ sơ')) {
+            if (profileState is ProfileError) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

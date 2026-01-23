@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../app/theme/colors.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/personal_finance_csv_service.dart';
 import '../../../data/datasources/local/personal_finance_local_datasource.dart';
 import '../../../injection_container.dart';
@@ -115,6 +117,8 @@ class _FinanceFormViewState extends State<_FinanceFormView> {
     return BlocConsumer<FinanceFormBloc, FinanceFormState>(
       listener: (context, state) {
         if (state is FinanceFormSubmitSuccess) {
+          final prefs = sl<SharedPreferences>();
+          prefs.setBool(AppConstants.onboardingKey, true);
           _showSuccessDialog(context);
         } else if (state is FinanceFormError) {
           ScaffoldMessenger.of(context).showSnackBar(
