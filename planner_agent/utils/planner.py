@@ -12,7 +12,7 @@ import asyncio
 with open("assets/SYSTEM_INSTRUCTION.md", "r", encoding="utf-8") as f:
     SYSTEM_INSTRUCTION = f.read()
 
-def generate_financial_prompt(user_data):
+def generate_financial_prompt(user_data: dict):
     """
     Hàm nhận dict dữ liệu từ API và trả về chuỗi Context Prompt.
     """
@@ -48,8 +48,11 @@ def generate_financial_prompt(user_data):
 
     # 4. Ghép vào Template (Sử dụng f-string)
     prompt_template = f"""
+Hôm nay là {user_data.get('current_day')}. Hãy lập kế hoạch tài chính cá nhân chi tiết dựa trên
 Hồ sơ khách hàng
 1. THÔNG TIN CÁ NHÂN
+- Họ tên: {user_data.get('ho_ten')}
+- Giới tính: {user_data.get('gioi_tinh')}
 - Tuổi: {user_data.get('tuoi_tac')}
 - Nghề nghiệp: {user_data.get('nghe_nghiep')}
 - Tình trạng hôn nhân: {user_data.get('tinh_trang_hon_nhan')}
@@ -67,16 +70,13 @@ Hồ sơ khách hàng
 """
     return prompt_template.strip()
 
-async def generate():
+async def generate(user_data):
     client = genai.Client(
         api_key=os.getenv("GEMINI_API_KEY"),
     )
 
     model = "gemini-flash-latest"
 
-    # read mock data json file
-    with open("mockData/khongNo_coAim.json", "r", encoding="utf-8") as f:
-        user_data = json.load(f)
     contents = [
         types.Content(
             role="user",
@@ -103,14 +103,15 @@ async def generate():
 
     full_response_text = ""
     try:
-        async for chunk in client.models.generate_content_stream(
+        async for chunk in await client.aio.models.generate_content_stream(
             model=model,
             contents=contents,
             config=generate_content_config,
         ):
-        if chunk.text:
-            print(chunk.text, end="")
-            full_response_text += chunk.text
+            if chunk.text:
+                print(chunk.text, end="")
+                full_response_text += chunk.text
+
         return full_response_text
     except Exception as e:
         print(f"Error during generation: {e}")

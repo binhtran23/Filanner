@@ -1,6 +1,6 @@
 # app/main.py
 from fastapi import FastAPI
-from controllers import finance_controller
+from controllers import finance_agent_controller
 from core.db import db
 
 app = FastAPI(title="AI Finance Model Server")
@@ -13,8 +13,8 @@ async def startup():
 async def shutdown():
     await db.disconnect()
 
-app.include_router(finance_controller.router)
+app.include_router(finance_agent_controller.router)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=6969, reload=True)

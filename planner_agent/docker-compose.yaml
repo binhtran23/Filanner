@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: finance_planner_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: finance_planner_app
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    ports:
+      - "6969:6969"
+    volumes:
+      - .:/planner_agent
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "
+        prisma migrate dev &&
+        uvicorn main:app --host 0.0.0.0 --port 6969 --reload
+      "
+
+volumes:
+  postgres_data:
