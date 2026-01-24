@@ -260,7 +260,7 @@ class _FinancialFormPageState extends State<FinancialFormPage> {
               decoration: BoxDecoration(
                 color: isCompleted || isCurrent
                     ? AppColors.primary
-                    : AppColors.primary.withValues(alpha: 0.2),
+                    : AppColors.primary.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -423,7 +423,7 @@ class _FinancialFormPageState extends State<FinancialFormPage> {
                     Icon(
                       Icons.receipt_long_outlined,
                       size: 64,
-                      color: AppColors.textSecondary.withValues(alpha: 0.5),
+                      color: AppColors.textSecondary.withOpacity(0.5),
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -454,7 +454,7 @@ class _FinancialFormPageState extends State<FinancialFormPage> {
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: AppColors.expense.withValues(alpha: 0.1),
+                      backgroundColor: AppColors.expense.withOpacity(0.1),
                       child: Icon(Icons.receipt, color: AppColors.expense),
                     ),
                     title: Text(expense.name),
@@ -531,7 +531,7 @@ class _FinancialFormPageState extends State<FinancialFormPage> {
                       }
                       form.control('goals').value = newGoals;
                     },
-                    selectedColor: AppColors.primary.withValues(alpha: 0.2),
+                    selectedColor: AppColors.primary.withOpacity(0.2),
                     checkmarkColor: AppColors.primary,
                   );
                 }).toList(),
@@ -604,7 +604,7 @@ class _FinancialFormPageState extends State<FinancialFormPage> {
             width: isSelected ? 2 : 1,
           ),
           color: isSelected
-              ? AppColors.primary.withValues(alpha: 0.05)
+              ? AppColors.primary.withOpacity(0.05)
               : Colors.transparent,
         ),
         child: Row(
@@ -613,7 +613,7 @@ class _FinancialFormPageState extends State<FinancialFormPage> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColors.primary.withValues(alpha: 0.1)
+                    ? AppColors.primary.withOpacity(0.1)
                     : AppColors.divider,
                 borderRadius: BorderRadius.circular(8),
               ),

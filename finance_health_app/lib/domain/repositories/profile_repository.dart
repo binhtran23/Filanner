@@ -15,7 +15,12 @@ abstract class ProfileRepository {
     required String educationLevel,
     required double monthlyIncome,
     double? otherIncome,
+    int? dependents,
+    double? currentSavings,
+    double? currentDebt,
     required List<FixedExpense> fixedExpenses,
+    List<String>? goals,
+    String? riskTolerance,
   });
 
   /// Cập nhật profile tài chính
@@ -26,6 +31,12 @@ abstract class ProfileRepository {
     String? educationLevel,
     double? monthlyIncome,
     double? otherIncome,
+    int? dependents,
+    double? currentSavings,
+    double? currentDebt,
+    List<FixedExpense>? fixedExpenses,
+    List<String>? goals,
+    String? riskTolerance,
   });
 
   /// Thêm chi tiêu cố định

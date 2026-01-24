@@ -9,7 +9,6 @@ import 'core/network/network_info.dart';
 import 'data/datasources/remote/auth_remote_datasource.dart';
 import 'data/datasources/remote/auth_remote_datasource_mock.dart';
 import 'data/datasources/remote/profile_remote_datasource.dart';
-import 'data/datasources/remote/profile_remote_datasource_mock.dart';
 import 'data/datasources/remote/planner_remote_datasource.dart';
 import 'data/datasources/remote/chat_remote_datasource.dart';
 import 'data/datasources/remote/export_remote_datasource.dart';
@@ -68,10 +67,8 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(dioClient: sl()),
   );
-  // TODO: Chuyển sang ProfileRemoteDataSourceImpl khi backend hỗ trợ profile
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceMock(), // Sử dụng mock để test UI
-    // () => ProfileRemoteDataSourceImpl(dioClient: sl()), // Uncomment khi backend ready
+    () => ProfileRemoteDataSourceImpl(dioClient: sl()),
   );
   sl.registerLazySingleton<PlannerRemoteDataSource>(
     () => PlannerRemoteDataSourceImpl(dioClient: sl()),

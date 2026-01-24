@@ -212,7 +212,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     result.fold((failure) {
       // Check for various "no profile" messages
       if (failure.message.contains('404') ||
-          failure.message.contains('not found') ||
+          failure.message.toLowerCase().contains('not found') ||
+          failure.message.contains('Không tìm thấy dữ liệu') ||
           failure.message.contains('Chưa có hồ sơ')) {
         emit(const ProfileNotFound());
       } else {

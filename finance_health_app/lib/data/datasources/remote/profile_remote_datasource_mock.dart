@@ -24,7 +24,12 @@ class ProfileRemoteDataSourceMock implements ProfileRemoteDataSource {
     required String educationLevel,
     required double monthlyIncome,
     double? otherIncome,
+    int? dependents,
+    double? currentSavings,
+    double? currentDebt,
     required List<Map<String, dynamic>> fixedExpenses,
+    List<String>? goals,
+    String? riskTolerance,
   }) async {
     await Future.delayed(const Duration(seconds: 1));
 
@@ -37,6 +42,9 @@ class ProfileRemoteDataSourceMock implements ProfileRemoteDataSource {
       educationLevel: educationLevel,
       monthlyIncome: monthlyIncome,
       otherIncome: otherIncome ?? 0,
+      dependents: dependents ?? 0,
+      currentSavings: currentSavings ?? 0,
+      currentDebt: currentDebt,
       fixedExpenses: fixedExpenses
           .map(
             (e) => FixedExpenseModel(
@@ -47,6 +55,8 @@ class ProfileRemoteDataSourceMock implements ProfileRemoteDataSource {
             ),
           )
           .toList(),
+      goals: goals,
+      riskTolerance: riskTolerance,
       createdAt: DateTime.now(),
     );
 

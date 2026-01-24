@@ -113,12 +113,12 @@ class _ProgressPageState extends State<ProgressPage>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primary.withValues(alpha: 0.1),
-            AppColors.secondary.withValues(alpha: 0.1),
+            AppColors.primary.withOpacity(0.1),
+            AppColors.secondary.withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+        border: Border.all(color: AppColors.primary.withOpacity(0.2)),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -130,7 +130,7 @@ class _ProgressPageState extends State<ProgressPage>
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: AppColors.primary.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -197,7 +197,7 @@ class _ProgressPageState extends State<ProgressPage>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.orange.withValues(alpha: 0.4),
+            color: Colors.orange.withOpacity(0.4),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -210,7 +210,7 @@ class _ProgressPageState extends State<ProgressPage>
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -262,7 +262,7 @@ class _ProgressPageState extends State<ProgressPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: Colors.white.withOpacity(0.15),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -298,7 +298,7 @@ class _ProgressPageState extends State<ProgressPage>
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
+                    color: AppColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(Icons.stars, color: AppColors.primary, size: 28),
@@ -349,7 +349,7 @@ class _ProgressPageState extends State<ProgressPage>
               borderRadius: BorderRadius.circular(8),
               child: LinearProgressIndicator(
                 value: state.levelProgress,
-                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                backgroundColor: AppColors.primary.withOpacity(0.1),
                 valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                 minHeight: 10,
               ),
@@ -390,7 +390,7 @@ class _ProgressPageState extends State<ProgressPage>
       return Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.05),
+          color: AppColors.primary.withOpacity(0.05),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -439,13 +439,13 @@ class _ProgressPageState extends State<ProgressPage>
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isUnlocked
-            ? AppColors.primary.withValues(alpha: 0.1)
-            : Colors.grey.withValues(alpha: 0.1),
+            ? AppColors.primary.withOpacity(0.1)
+            : Colors.grey.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isUnlocked
-              ? AppColors.primary.withValues(alpha: 0.3)
-              : Colors.grey.withValues(alpha: 0.2),
+              ? AppColors.primary.withOpacity(0.3)
+              : Colors.grey.withOpacity(0.2),
         ),
       ),
       child: Column(
@@ -455,8 +455,8 @@ class _ProgressPageState extends State<ProgressPage>
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: isUnlocked
-                  ? AppColors.primary.withValues(alpha: 0.15)
-                  : Colors.grey.withValues(alpha: 0.15),
+                  ? AppColors.primary.withOpacity(0.15)
+                  : Colors.grey.withOpacity(0.15),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -522,10 +522,10 @@ class _ProgressPageState extends State<ProgressPage>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.primary.withValues(alpha: 0.1)),
+            border: Border.all(color: AppColors.primary.withOpacity(0.1)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: Colors.black.withOpacity(0.05),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -547,7 +547,7 @@ class _ProgressPageState extends State<ProgressPage>
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.success.withValues(alpha: 0.1),
+                      color: AppColors.success.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -566,7 +566,7 @@ class _ProgressPageState extends State<ProgressPage>
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: milestone['progress'] as double,
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                  backgroundColor: AppColors.primary.withOpacity(0.1),
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                   minHeight: 6,
                 ),
@@ -588,7 +588,7 @@ class _ProgressPageState extends State<ProgressPage>
             Icon(
               Icons.trending_up,
               size: 80,
-              color: AppColors.primary.withValues(alpha: 0.5),
+              color: AppColors.primary.withOpacity(0.5),
             ),
             const SizedBox(height: 24),
             Text(

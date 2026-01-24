@@ -14,7 +14,12 @@ abstract class ProfileRemoteDataSource {
     required String educationLevel,
     required double monthlyIncome,
     double? otherIncome,
+    int? dependents,
+    double? currentSavings,
+    double? currentDebt,
     required List<Map<String, dynamic>> fixedExpenses,
+    List<String>? goals,
+    String? riskTolerance,
   });
 
   Future<FinancialProfileModel> updateProfile(Map<String, dynamic> data);
@@ -54,7 +59,12 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     required String educationLevel,
     required double monthlyIncome,
     double? otherIncome,
+    int? dependents,
+    double? currentSavings,
+    double? currentDebt,
     required List<Map<String, dynamic>> fixedExpenses,
+    List<String>? goals,
+    String? riskTolerance,
   }) async {
     try {
       final response = await dioClient.post(
@@ -66,7 +76,12 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           'education_level': educationLevel,
           'monthly_income': monthlyIncome,
           'other_income': otherIncome,
+          'dependents': dependents,
+          'current_savings': currentSavings,
+          'current_debt': currentDebt,
           'fixed_expenses': fixedExpenses,
+          'goals': goals,
+          'risk_tolerance': riskTolerance,
         },
       );
       return FinancialProfileModel.fromJson(response.data);

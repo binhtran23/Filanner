@@ -11,9 +11,15 @@ router = APIRouter()
 # 1. API Tao User moi (POST /users)
 @router.post("/", response_model=UserResponse)
 def create_user(user_in: UserCreate, session: Session = Depends(get_session)):
+    # Check for duplicate email
     existing_user = session.exec(select(User).where(User.email == user_in.email)).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email da ton tai")
+    
+    # Check for duplicate username
+    existing_username = session.exec(select(User).where(User.username == user_in.username)).first()
+    if existing_username:
+        raise HTTPException(status_code=400, detail="Username da ton tai")
     
     hashed_password = get_password_hash(user_in.password)
     db_user = User.model_validate(

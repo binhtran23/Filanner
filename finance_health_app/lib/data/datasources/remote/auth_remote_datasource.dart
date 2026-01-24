@@ -38,7 +38,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await dioClient.post(
         ApiEndpoints.login,
         data: {'username': username, 'password': password},
-        options: Options(contentType: Headers.formUrlEncodedContentType),
       );
 
       final accessToken = response.data['access_token'] as String;
@@ -73,7 +72,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final tokenResponse = await dioClient.post(
         ApiEndpoints.login,
         data: {'username': username, 'password': password},
-        options: Options(contentType: Headers.formUrlEncodedContentType),
       );
 
       final accessToken = tokenResponse.data['access_token'] as String;

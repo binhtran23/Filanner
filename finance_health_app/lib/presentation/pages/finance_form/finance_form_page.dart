@@ -9,6 +9,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/personal_finance_csv_service.dart';
 import '../../../data/datasources/local/personal_finance_local_datasource.dart';
 import '../../../injection_container.dart';
+import '../../../domain/repositories/profile_repository.dart';
 import '../../blocs/finance_form/finance_form_bloc.dart';
 import '../../blocs/finance_form/finance_form_event.dart';
 import '../../blocs/finance_form/finance_form_state.dart';
@@ -32,7 +33,10 @@ class FinancialFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          FinanceFormBloc(localDataSource: sl<PersonalFinanceLocalDataSource>())
+          FinanceFormBloc(
+            localDataSource: sl<PersonalFinanceLocalDataSource>(),
+            profileRepository: sl<ProfileRepository>(),
+          )
             ..add(const FinanceFormLoaded()),
       child: const _FinanceFormView(),
     );

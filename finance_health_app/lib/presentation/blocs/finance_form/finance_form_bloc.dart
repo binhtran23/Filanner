@@ -2,16 +2,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/datasources/local/personal_finance_local_datasource.dart';
 import '../../../domain/entities/financial_goal.dart';
+import '../../../domain/entities/financial_profile.dart';
 import '../../../domain/entities/mandatory_expense.dart';
+import '../../../domain/repositories/profile_repository.dart';
 import 'finance_form_event.dart';
 import 'finance_form_state.dart';
 
 /// BLoC quản lý form thu thập thông tin tài chính cá nhân
 class FinanceFormBloc extends Bloc<FinanceFormEvent, FinanceFormState> {
   final PersonalFinanceLocalDataSource _localDataSource;
+  final ProfileRepository _profileRepository;
 
-  FinanceFormBloc({required PersonalFinanceLocalDataSource localDataSource})
-    : _localDataSource = localDataSource,
+  FinanceFormBloc({
+    required PersonalFinanceLocalDataSource localDataSource,
+    required ProfileRepository profileRepository,
+  }) : _localDataSource = localDataSource,
+       _profileRepository = profileRepository,
       super(const FinanceFormInitial()) {
     // Form events
     on<FinanceFormInitialized>(_onInitialized);
@@ -136,6 +142,44 @@ class FinanceFormBloc extends Bloc<FinanceFormEvent, FinanceFormState> {
       try {
         final personalFinance = currentState.toPersonalFinance()!;
         await _localDataSource.savePersonalFinance(personalFinance);
+
+        final fixedExpenses = currentState.mandatoryExpenses
+            .map(
+              (expense) => FixedExpense(
+                id: expense.id,
+                name: expense.name,
+                category: expense.frequency.label,
+                amount: expense.monthlyAmount,
+                description: expense.note,
+              ),
+            )
+            .toList();
+
+        final goals = currentState.financialGoals
+            .map((goal) => goal.displayName)
+            .toList();
+
+        final profileResult = await _profileRepository.createProfile(
+          age: currentState.age!,
+          gender: 'unknown',
+          occupation: currentState.occupation!,
+          educationLevel: '',
+          monthlyIncome: currentState.monthlyIncome!,
+          currentDebt: currentState.hasDebt ? currentState.totalDebt : null,
+          fixedExpenses: fixedExpenses,
+          goals: goals.isEmpty ? null : goals,
+        );
+
+        final failure = profileResult.fold((error) => error, (_) => null);
+        if (failure != null) {
+          emit(
+            FinanceFormError(
+              message: failure.message,
+              previousState: currentState,
+            ),
+          );
+          return;
+        }
 
         // Clear draft after successful submission
         await _localDataSource.clearFormDraft();

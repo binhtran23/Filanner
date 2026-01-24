@@ -40,7 +40,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
     required String educationLevel,
     required double monthlyIncome,
     double? otherIncome,
+    int? dependents,
+    double? currentSavings,
+    double? currentDebt,
     required List<FixedExpense> fixedExpenses,
+    List<String>? goals,
+    String? riskTolerance,
   }) async {
     if (!await networkInfo.isConnected) {
       return const Left(NetworkFailure());
@@ -54,9 +59,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
         educationLevel: educationLevel,
         monthlyIncome: monthlyIncome,
         otherIncome: otherIncome,
+        dependents: dependents ?? 0,
+        currentSavings: currentSavings ?? 0,
+        currentDebt: currentDebt,
         fixedExpenses: fixedExpenses
             .map((e) => FixedExpenseModel.fromEntity(e).toJson())
             .toList(),
+        goals: goals ?? const [],
+        riskTolerance: riskTolerance,
       );
       return Right(profile);
     } on ServerException catch (e) {
@@ -74,6 +84,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
     String? educationLevel,
     double? monthlyIncome,
     double? otherIncome,
+    int? dependents,
+    double? currentSavings,
+    double? currentDebt,
+    List<FixedExpense>? fixedExpenses,
+    List<String>? goals,
+    String? riskTolerance,
   }) async {
     if (!await networkInfo.isConnected) {
       return const Left(NetworkFailure());
@@ -87,6 +103,16 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (educationLevel != null) data['education_level'] = educationLevel;
       if (monthlyIncome != null) data['monthly_income'] = monthlyIncome;
       if (otherIncome != null) data['other_income'] = otherIncome;
+      if (dependents != null) data['dependents'] = dependents;
+      if (currentSavings != null) data['current_savings'] = currentSavings;
+      if (currentDebt != null) data['current_debt'] = currentDebt;
+      if (fixedExpenses != null) {
+        data['fixed_expenses'] = fixedExpenses
+            .map((e) => FixedExpenseModel.fromEntity(e).toJson())
+            .toList();
+      }
+      if (goals != null) data['goals'] = goals;
+      if (riskTolerance != null) data['risk_tolerance'] = riskTolerance;
 
       final profile = await remoteDataSource.updateProfile(data);
       return Right(profile);

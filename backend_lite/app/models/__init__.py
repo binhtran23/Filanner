@@ -1,4 +1,13 @@
-from app.models.users import User, Profile, ProfileCreate, ProfileResponse
+from app.models.users import (
+    User,
+    Profile,
+    ProfileCreate,
+    ProfileUpdate,
+    ProfileResponse,
+    FixedExpense,
+    FixedExpenseCreate,
+    FixedExpenseUpdate,
+)
 from app.models.auth import UserCreate, UserLogin, Token, TokenData, UserResponse
 from app.models.transactions import (
     Transaction,
@@ -34,7 +43,11 @@ __all__ = [
     "User",
     "Profile",
     "ProfileCreate",
+    "ProfileUpdate",
     "ProfileResponse",
+    "FixedExpense",
+    "FixedExpenseCreate",
+    "FixedExpenseUpdate",
     "UserCreate",
     "UserLogin",
     "Token",

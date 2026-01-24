@@ -118,7 +118,7 @@ class _PlannerPageState extends State<PlannerPage> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: AppColors.primary.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -244,7 +244,7 @@ class _PlannerPageState extends State<PlannerPage> {
         gradient: AppColors.primaryGradient,
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
+            color: AppColors.primary.withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -272,7 +272,7 @@ class _PlannerPageState extends State<PlannerPage> {
                       'Cập nhật: ${_formatDate(plan.updatedAt ?? plan.createdAt)}',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: Colors.white.withOpacity(0.8),
                       ),
                     ),
                   ],
@@ -284,7 +284,7 @@ class _PlannerPageState extends State<PlannerPage> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -314,7 +314,7 @@ class _PlannerPageState extends State<PlannerPage> {
               plan.description!,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.9),
+                color: Colors.white.withOpacity(0.9),
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -324,7 +324,7 @@ class _PlannerPageState extends State<PlannerPage> {
           // Progress bar
           LinearProgressIndicator(
             value: plan.progress / 100,
-            backgroundColor: Colors.white.withValues(alpha: 0.3),
+            backgroundColor: Colors.white.withOpacity(0.3),
             valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
           ),
           const SizedBox(height: 4),
@@ -332,7 +332,7 @@ class _PlannerPageState extends State<PlannerPage> {
             '${plan.progress.toStringAsFixed(0)}% hoàn thành',
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white.withValues(alpha: 0.9),
+              color: Colors.white.withOpacity(0.9),
             ),
           ),
         ],
@@ -355,18 +355,18 @@ class _PlannerPageState extends State<PlannerPage> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSelected
-              ? statusColor.withValues(alpha: 0.15)
+              ? statusColor.withOpacity(0.15)
               : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
                 ? statusColor
-                : statusColor.withValues(alpha: 0.3),
+                : statusColor.withOpacity(0.3),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -379,7 +379,7 @@ class _PlannerPageState extends State<PlannerPage> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: statusColor.withValues(alpha: 0.1),
+                color: statusColor.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -416,7 +416,7 @@ class _PlannerPageState extends State<PlannerPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: statusColor.withValues(alpha: 0.1),
+                color: statusColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -444,7 +444,7 @@ class _PlannerPageState extends State<PlannerPage> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, -4),
           ),
@@ -459,7 +459,7 @@ class _PlannerPageState extends State<PlannerPage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: 0.1),
+                  color: statusColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(

@@ -36,16 +36,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
+        if (state is ProfileError &&
+            state.message.contains('Phiên đăng nhập đã hết hạn')) {
+          context.read<AuthBloc>().add(const AuthLogoutRequested());
+          return;
+        }
+
         if (state is ProfileNotFound) {
           final prefs = di.sl<SharedPreferences>();
-          final onboardingDone =
-              prefs.getBool(AppConstants.onboardingKey) ?? false;
-
-          if (!onboardingDone) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.go(AppRoutes.onboarding);
-            });
-          }
+          prefs.setBool(AppConstants.onboardingKey, false);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.go(AppRoutes.onboarding);
+          });
         }
       },
       child: Scaffold(
@@ -341,7 +343,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: action.color.withValues(alpha: 0.1),
+                  color: action.color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(action.icon, color: action.color),
@@ -405,7 +407,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
+                    color: color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(icon, color: color, size: 20),

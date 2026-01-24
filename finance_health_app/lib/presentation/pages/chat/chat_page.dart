@@ -60,7 +60,7 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             CircleAvatar(
               radius: 18,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.2),
+              backgroundColor: AppColors.primary.withOpacity(0.2),
               child: Icon(Icons.smart_toy, color: AppColors.primary, size: 20),
             ),
             const SizedBox(width: 12),
@@ -225,7 +225,7 @@ class _ChatPageState extends State<ChatPage> {
           Icon(
             Icons.chat_bubble_outline,
             size: 64,
-            color: AppColors.textSecondary.withValues(alpha: 0.5),
+            color: AppColors.textSecondary.withOpacity(0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -368,9 +368,7 @@ class _ChatPageState extends State<ChatPage> {
                               final conv = state.conversations[index];
                               return ListTile(
                                 leading: CircleAvatar(
-                                  backgroundColor: AppColors.primary.withValues(
-                                    alpha: 0.1,
-                                  ),
+                                  backgroundColor: AppColors.primary.withOpacity(0.1),
                                   child: Icon(
                                     Icons.chat_bubble_outline,
                                     color: AppColors.primary,

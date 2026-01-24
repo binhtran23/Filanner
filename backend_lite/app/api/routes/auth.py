@@ -1,7 +1,7 @@
 from datetime import timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 
@@ -15,7 +15,56 @@ from app.models.auth import Token, UserCreate, UserResponse
 router = APIRouter()
 
 @router.post("/login", response_model=Token)
-def login_access_token(
+async def login_access_token_json(
+    request: Request,
+    session: Annotated[Session, Depends(get_session)]
+):
+    """
+    JSON or form login, get an access token for future requests.
+    """
+    content_type = request.headers.get("content-type", "")
+    data = {}
+
+    if "application/x-www-form-urlencoded" in content_type or "multipart/form-data" in content_type:
+        form = await request.form()
+        data = dict(form)
+    else:
+        try:
+            data = await request.json()
+        except Exception:
+            data = {}
+
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Username va mat khau la bat buoc",
+        )
+
+    user = session.exec(select(User).where(User.username == username)).first()
+
+    if not user or not verify_password(password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Username hoac mat khau khong chinh xac",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token_legacy(
+        subject=user.id, expires_delta=access_token_expires
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+
+
+@router.post("/login-form", response_model=Token)
+def login_access_token_form(
     session: Annotated[Session, Depends(get_session)],
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ):
@@ -26,7 +75,6 @@ def login_access_token(
     """
     user = session.exec(select(User).where(User.username == form_data.username)).first()
 
-    # 2. Kiem tra User ton tai va Password dung
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -34,12 +82,11 @@ def login_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # 3. Tao token
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token_legacy(
         subject=user.id, expires_delta=access_token_expires
     )
-    
+
     return {
         "access_token": access_token,
         "token_type": "bearer"

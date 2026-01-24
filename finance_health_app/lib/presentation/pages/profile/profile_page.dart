@@ -140,7 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Icon(
                   Icons.person_add_outlined,
                   size: 80,
-                  color: AppColors.primary.withValues(alpha: 0.5),
+                  color: AppColors.primary.withOpacity(0.5),
                 ),
                 const SizedBox(height: 24),
                 Text(
@@ -185,7 +185,7 @@ class _ProfilePageState extends State<ProfilePage> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.3),
+                color: AppColors.primary.withOpacity(0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 6),
               ),
@@ -195,7 +195,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               CircleAvatar(
                 radius: 40,
-                backgroundColor: Colors.white.withValues(alpha: 0.2),
+                backgroundColor: Colors.white.withOpacity(0.2),
                 child: Text(
                   username.isNotEmpty ? username[0].toUpperCase() : 'U',
                   style: const TextStyle(
@@ -224,7 +224,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         email,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white.withValues(alpha: 0.8),
+                          color: Colors.white.withOpacity(0.8),
                         ),
                       ),
                     ],
@@ -339,9 +339,9 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,7 +377,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Icon(
                   Icons.receipt_long_outlined,
                   size: 48,
-                  color: AppColors.textSecondary.withValues(alpha: 0.5),
+                  color: AppColors.textSecondary.withOpacity(0.5),
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -401,7 +401,7 @@ class _ProfilePageState extends State<ProfilePage> {
           final expense = expenses[index];
           return ListTile(
             leading: CircleAvatar(
-              backgroundColor: AppColors.expense.withValues(alpha: 0.1),
+              backgroundColor: AppColors.expense.withOpacity(0.1),
               child: Icon(
                 _getExpenseIcon(expense.category),
                 color: AppColors.expense,
@@ -433,7 +433,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Icon(
                   Icons.flag_outlined,
                   size: 48,
-                  color: AppColors.textSecondary.withValues(alpha: 0.5),
+                  color: AppColors.textSecondary.withOpacity(0.5),
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -457,7 +457,7 @@ class _ProfilePageState extends State<ProfilePage> {
             return Chip(
               label: Text(goal),
               avatar: const Icon(Icons.check_circle, size: 18),
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+              backgroundColor: AppColors.primary.withOpacity(0.1),
               labelStyle: TextStyle(color: AppColors.primary),
             );
           }).toList(),
