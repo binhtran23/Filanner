@@ -1,0 +1,19 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Cài đặt các thư viện cần thiết cho hệ điều hành (để cài psycopg2)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy file requirements và cài đặt thư viện Python
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy toàn bộ code vào container
+COPY . .
+
+# Mở port 8000
+EXPOSE 8000

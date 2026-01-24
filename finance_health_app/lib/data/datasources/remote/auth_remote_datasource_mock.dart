@@ -15,16 +15,15 @@ class AuthRemoteDataSourceMock implements AuthRemoteDataSource {
     // Mock successful login for testing
     if (username == 'tayroi' && password == '120anglyen') {
       return LoginResponseModel(
-        accessToken:
-            'mock_access_token_${DateTime.now().millisecondsSinceEpoch}',
-        refreshToken:
-            'mock_refresh_token_${DateTime.now().millisecondsSinceEpoch}',
         user: UserModel(
           id: 'mock_user_id',
           username: username,
           email: 'tayroi@example.com',
           createdAt: DateTime.now(),
         ),
+        accessToken:
+            'mock_access_token_${DateTime.now().millisecondsSinceEpoch}',
+        tokenType: 'bearer',
       );
     }
 
@@ -40,22 +39,15 @@ class AuthRemoteDataSourceMock implements AuthRemoteDataSource {
     await Future.delayed(const Duration(seconds: 1));
 
     return LoginResponseModel(
-      accessToken: 'mock_access_token_${DateTime.now().millisecondsSinceEpoch}',
-      refreshToken:
-          'mock_refresh_token_${DateTime.now().millisecondsSinceEpoch}',
       user: UserModel(
         id: 'mock_user_id',
         username: username,
         email: email,
         createdAt: DateTime.now(),
       ),
+      accessToken: 'mock_access_token_${DateTime.now().millisecondsSinceEpoch}',
+      tokenType: 'bearer',
     );
-  }
-
-  @override
-  Future<String> refreshToken(String refreshToken) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return 'mock_new_access_token_${DateTime.now().millisecondsSinceEpoch}';
   }
 
   @override

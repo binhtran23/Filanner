@@ -13,12 +13,6 @@ abstract class AuthLocalDataSource {
   /// Lấy access token
   Future<String?> getAccessToken();
 
-  /// Lưu refresh token
-  Future<void> saveRefreshToken(String token);
-
-  /// Lấy refresh token
-  Future<String?> getRefreshToken();
-
   /// Lưu thông tin user
   Future<void> saveUser(UserModel user);
 
@@ -61,25 +55,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
-  Future<void> saveRefreshToken(String token) async {
-    try {
-      // Use SharedPreferences for web platform (FlutterSecureStorage hangs on web)
-      await sharedPreferences.setString(AppConstants.refreshTokenKey, token);
-    } catch (e) {
-      throw CacheException(message: 'Không thể lưu refresh token');
-    }
-  }
-
-  @override
-  Future<String?> getRefreshToken() async {
-    try {
-      return sharedPreferences.getString(AppConstants.refreshTokenKey);
-    } catch (e) {
-      throw CacheException(message: 'Không thể đọc refresh token');
-    }
-  }
-
-  @override
   Future<void> saveUser(UserModel user) async {
     try {
       final userJson = jsonEncode(user.toJson());
@@ -106,7 +81,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<void> clearAuthData() async {
     try {
       await sharedPreferences.remove(AppConstants.accessTokenKey);
-      await sharedPreferences.remove(AppConstants.refreshTokenKey);
       await sharedPreferences.remove(AppConstants.userDataKey);
     } catch (e) {
       throw CacheException(message: 'Không thể xóa dữ liệu auth');

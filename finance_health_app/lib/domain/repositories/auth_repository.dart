@@ -26,6 +26,4 @@ abstract class AuthRepository {
   /// Lấy thông tin user hiện tại từ cache
   Future<Either<Failure, User?>> getCurrentUser();
 
-  /// Refresh token
-  Future<Either<Failure, void>> refreshToken();
 }

@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/errors/exceptions.dart';
 import '../../../core/network/dio_client.dart';
@@ -18,9 +20,6 @@ abstract class AuthRemoteDataSource {
     required String password,
   });
 
-  /// Refresh token
-  Future<String> refreshToken(String refreshToken);
-
   /// Đăng xuất
   Future<void> logout();
 }
@@ -39,9 +38,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await dioClient.post(
         ApiEndpoints.login,
         data: {'username': username, 'password': password},
+        options: Options(contentType: Headers.formUrlEncodedContentType),
       );
 
-      return LoginResponseModel.fromJson(response.data);
+      final accessToken = response.data['access_token'] as String;
+      final tokenType = response.data['token_type'] as String? ?? 'bearer';
+      final userId = _decodeUserId(accessToken);
+      final user = await _fetchUser(userId, accessToken);
+
+      return LoginResponseModel(
+        user: user,
+        accessToken: accessToken,
+        tokenType: tokenType,
+      );
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -59,21 +68,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         data: {'username': username, 'email': email, 'password': password},
       );
 
-      return LoginResponseModel.fromJson(response.data);
-    } catch (e) {
-      throw ServerException(message: e.toString());
-    }
-  }
+      final user = UserModel.fromJson(response.data as Map<String, dynamic>);
 
-  @override
-  Future<String> refreshToken(String refreshToken) async {
-    try {
-      final response = await dioClient.post(
-        ApiEndpoints.refreshToken,
-        data: {'refresh_token': refreshToken},
+      final tokenResponse = await dioClient.post(
+        ApiEndpoints.login,
+        data: {'username': username, 'password': password},
+        options: Options(contentType: Headers.formUrlEncodedContentType),
       );
 
-      return response.data['access_token'] as String;
+      final accessToken = tokenResponse.data['access_token'] as String;
+      final tokenType = tokenResponse.data['token_type'] as String? ?? 'bearer';
+
+      return LoginResponseModel(
+        user: user,
+        accessToken: accessToken,
+        tokenType: tokenType,
+      );
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -81,10 +91,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> logout() async {
-    try {
-      await dioClient.post(ApiEndpoints.logout);
-    } catch (e) {
-      // Ignore errors on logout
+    return;
+  }
+
+  String _decodeUserId(String accessToken) {
+    final decoded = JwtDecoder.decode(accessToken);
+    final userId = decoded['sub'];
+    if (userId == null) {
+      throw const ServerException(message: 'Token thiếu thông tin user');
     }
+    return userId.toString();
+  }
+
+  Future<UserModel> _fetchUser(String userId, String accessToken) async {
+    final response = await dioClient.get(
+      ApiEndpoints.userById(userId),
+      options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+    );
+    return UserModel.fromJson(response.data as Map<String, dynamic>);
   }
 }

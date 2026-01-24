@@ -1,61 +1,75 @@
+
 services:
+  # 1. DATABASE (Dùng image chuẩn, không build custom nữa)
   db:
-    build:
-      context: ./backend/app/db
+    image: pgvector/pgvector:pg16  # Image có sẵn Vector
     container_name: filanner_db
-    user: root:root
-    env_file:
-      - .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-filanner_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-filanner_password}
       POSTGRES_DB: ${POSTGRES_DB:-filanner_db}
     volumes:
-      - ./mnt/db:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-filanner_user}", "-d", "${POSTGRES_DB:-filanner_db}"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-filanner_user} -d ${POSTGRES_DB:-filanner_db}"]
+      interval: 15s
       retries: 5
     networks:
       - filanner-network
 
+  # 2. BACKEND LITE (Trỏ vào folder mới của bạn)
   backend:
     build:
-      context: ./backend
+      context: ./backend_lite  
       dockerfile: Dockerfile
     container_name: filanner_backend
     env_file:
       - .env
     environment:
-      POSTGRES_SERVER: db
+      POSTGRES_SERVER: db  # <--- QUAN TRỌNG NHẤT: Trỏ sang service db
+      POSTGRES_PORT: 5432
       POSTGRES_USER: ${POSTGRES_USER:-filanner_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-filanner_password}
       POSTGRES_DB: ${POSTGRES_DB:-filanner_db}
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend_lite:/app  
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     depends_on:
       db:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
     networks:
       - filanner-network
-    command: >
-      sh -c "
-        echo 'Waiting for database...' &&
-        sleep 10 &&
-        echo 'Initializing database...' &&
-        python -m app.db.init_db || echo 'Database already initialized' &&
-        echo 'Starting FastAPI server...' &&
-        uvicorn app.main:app --host 0.0.0.0 --port 8000
-      "
+    # Chạy lệnh đơn giản nhất để start server
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ./finance_health_app
+      dockerfile: Dockerfile
+      args:
+        API_BASE_URL: http://localhost:8000/api
+        WS_URL: ws://localhost:8000/ws
+    container_name: filanner_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - filanner-network
 
 networks:
   filanner-network:
     driver: bridge
+
+volumes:
+  postgres_data:

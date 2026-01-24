@@ -1,0 +1,30 @@
+# --- Web framework ---
+fastapi>=0.110
+uvicorn[standard]>=0.29
+
+# --- ORM / DB ---
+sqlmodel>=0.0.16
+sqlalchemy>=2.0
+psycopg2-binary>=2.9
+
+# --- PostgreSQL vector support ---
+pgvector>=0.2.4
+
+# --- Environment & config ---
+python-dotenv>=1.0
+
+# --- Validation ---
+pydantic>=2.6
+email-validator>=2.0
+
+# --- Optional: async DB support ---
+asyncpg>=0.29
+
+# --- Authentication & Security ---
+python-jose[cryptography]>=3.3
+bcrypt>=4.0.1
+pydantic-settings>=2.0
+python-multipart>=0.0.9
+
+# --- Optional: embeddings / AI ---
+numpy>=1.26

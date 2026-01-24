@@ -35,7 +35,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
       // Lưu tokens và user info
       await localDataSource.saveAccessToken(response.accessToken);
-      await localDataSource.saveRefreshToken(response.refreshToken);
       await localDataSource.saveUser(response.user);
 
       return Right(response.user);
@@ -67,7 +66,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
       // Lưu tokens và user info
       await localDataSource.saveAccessToken(response.accessToken);
-      await localDataSource.saveRefreshToken(response.refreshToken);
       await localDataSource.saveUser(response.user);
 
       return Right(response.user);
@@ -83,7 +81,6 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, void>> logout() async {
     try {
-      // Gọi API logout (optional)
       if (await networkInfo.isConnected) {
         await remoteDataSource.logout();
       }
@@ -121,26 +118,4 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, void>> refreshToken() async {
-    if (!await networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
-      final refreshToken = await localDataSource.getRefreshToken();
-      if (refreshToken == null) {
-        return const Left(AuthFailure(message: 'Không có refresh token'));
-      }
-
-      final newAccessToken = await remoteDataSource.refreshToken(refreshToken);
-      await localDataSource.saveAccessToken(newAccessToken);
-
-      return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } catch (e) {
-      return Left(UnknownFailure(message: e.toString()));
-    }
-  }
 }
