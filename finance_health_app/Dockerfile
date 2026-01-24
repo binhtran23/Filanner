@@ -2,8 +2,9 @@ FROM ghcr.io/cirruslabs/flutter:3.38.7 AS build
 
 WORKDIR /app
 
-COPY pubspec.yaml pubspec.lock ./
-RUN flutter pub get
+COPY pubspec.yaml ./
+RUN flutter clean || true
+RUN flutter pub get --verbose
 
 COPY . .
 

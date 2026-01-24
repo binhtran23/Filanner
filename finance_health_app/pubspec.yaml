@@ -30,7 +30,7 @@ dependencies:
   flutter_chat_types: ^3.6.2
 
   # Graph/Node Visualization (Planner)
-  graphview: ^1.2.1
+  # graphview: ^1.2.0  # Temporarily disabled due to Docker build issues
 
   # Authentication & Security
   flutter_secure_storage: ^9.2.2

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:graphview/graphview.dart' as graphview;
+// import 'package:graphview/graphview.dart' as graphview;  // Temporarily disabled
 
 import '../../../app/theme/colors.dart';
 import '../../../domain/entities/plan.dart';
@@ -14,27 +14,28 @@ class PlannerPage extends StatefulWidget {
 }
 
 class _PlannerPageState extends State<PlannerPage> {
-  final graphview.Graph graph = graphview.Graph();
-  graphview.BuchheimWalkerConfiguration builder =
-      graphview.BuchheimWalkerConfiguration();
+  // Temporarily removed graph functionality
+  // final graphview.Graph graph = graphview.Graph();
+  // graphview.BuchheimWalkerConfiguration builder =
+  //     graphview.BuchheimWalkerConfiguration();
 
   PlanNode? _selectedNode;
 
   @override
   void initState() {
     super.initState();
-    _setupGraphConfig();
+    // _setupGraphConfig();
     context.read<PlannerBloc>().add(const PlannerLoadRequested());
   }
 
-  void _setupGraphConfig() {
-    builder
-      ..siblingSeparation = 60
-      ..levelSeparation = 80
-      ..subtreeSeparation = 80
-      ..orientation =
-          graphview.BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM;
-  }
+  // void _setupGraphConfig() {
+  //   builder
+  //     ..siblingSeparation = 60
+  //     ..levelSeparation = 80
+  //     ..subtreeSeparation = 80
+  //     ..orientation =
+  //         graphview.BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -159,36 +160,49 @@ class _PlannerPageState extends State<PlannerPage> {
   }
 
   Widget _buildPlanContent(Plan plan) {
-    _buildGraph(plan);
+    // Temporarily disabled graph visualization
+    // _buildGraph(plan);
 
     return Column(
       children: [
         // Plan Header
         _buildPlanHeader(plan),
 
-        // Graph View
+        // Simple List View (replacing Graph View temporarily)
         Expanded(
-          child: InteractiveViewer(
-            constrained: false,
-            boundaryMargin: const EdgeInsets.all(100),
-            minScale: 0.3,
-            maxScale: 2.0,
-            child: graphview.GraphView(
-              graph: graph,
-              algorithm: graphview.BuchheimWalkerAlgorithm(
-                builder,
-                graphview.TreeEdgeRenderer(builder),
-              ),
-              paint: Paint()
-                ..color = AppColors.primary.withValues(alpha: 0.3)
-                ..strokeWidth = 2
-                ..style = PaintingStyle.stroke,
-              builder: (node) {
-                final nodeData = node.key?.value as PlanNode?;
-                if (nodeData == null) return const SizedBox();
-                return _buildNodeWidget(nodeData);
-              },
-            ),
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: plan.nodes.length,
+            itemBuilder: (context, index) {
+              final node = plan.nodes[index];
+              return Card(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: InkWell(
+                  onTap: () => setState(() => _selectedNode = node),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          node.title,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        if (node.description != null) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            node.description!,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
 
@@ -198,29 +212,30 @@ class _PlannerPageState extends State<PlannerPage> {
     );
   }
 
-  void _buildGraph(Plan plan) {
-    graph.nodes.clear();
-    graph.edges.clear();
-
-    if (plan.nodes.isEmpty) return;
-
-    // Create nodes map
-    final nodeMap = <String, graphview.Node>{};
-    for (final node in plan.nodes) {
-      final graphNode = graphview.Node.Id(node);
-      nodeMap[node.id] = graphNode;
-      graph.addNode(graphNode);
-    }
-
-    // Create edges based on parentNodeId
-    for (final node in plan.nodes) {
-      if (node.parentNodeId != null && nodeMap.containsKey(node.parentNodeId)) {
-        final parentNode = nodeMap[node.parentNodeId]!;
-        final childNode = nodeMap[node.id]!;
-        graph.addEdge(parentNode, childNode);
-      }
-    }
-  }
+  // Temporarily disabled graph building
+  // void _buildGraph(Plan plan) {
+  //   graph.nodes.clear();
+  //   graph.edges.clear();
+  //
+  //   if (plan.nodes.isEmpty) return;
+  //
+  //   // Create nodes map
+  //   final nodeMap = <String, graphview.Node>{};
+  //   for (final node in plan.nodes) {
+  //     final graphNode = graphview.Node.Id(node);
+  //     nodeMap[node.id] = graphNode;
+  //     graph.addNode(graphNode);
+  //   }
+  //
+  //   // Create edges based on parentNodeId
+  //   for (final node in plan.nodes) {
+  //     if (node.parentNodeId != null && nodeMap.containsKey(node.parentNodeId)) {
+  //       final parentNode = nodeMap[node.parentNodeId]!;
+  //       final childNode = nodeMap[node.id]!;
+  //       graph.addEdge(parentNode, childNode);
+  //     }
+  //   }
+  // }
 
   Widget _buildPlanHeader(Plan plan) {
     return Container(
