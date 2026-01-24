@@ -1,0 +1,36 @@
+{
+  "tuoi_tac": 29,
+  "nghe_nghiep": "Trưởng nhóm Marketing",
+  "tinh_trang_hon_nhan": "Đang hẹn hò",
+  "thu_nhap_hang_thang": 35000000,
+  "no": true,
+  "tong_no": 120000000,
+  "chi_tieu_bat_buoc": [
+    {
+      "ten_chi_tieu": "Trả góp xe ô tô",
+      "uoc_tinh": 8500000,
+      "tan_suat": "Hàng tháng",
+      "note": "Trả gốc + lãi ngân hàng, còn 14 tháng"
+    },
+    {
+      "ten_chi_tieu": "Thuê chung cư",
+      "uoc_tinh": 6000000,
+      "tan_suat": "Hàng tháng",
+      "note": "Chung cư 2 phòng ngủ (đã bao gồm phí quản lý)"
+    },
+    {
+      "ten_chi_tieu": "Sinh hoạt phí (Ăn uống/Đi lại)",
+      "uoc_tinh": 7000000,
+      "tan_suat": "Hàng tháng",
+      "note": "Ăn ngoài thường xuyên do tính chất công việc"
+    },
+    {
+      "ten_chi_tieu": "Bảo hiểm nhân thọ",
+      "uoc_tinh": 2000000,
+      "tan_suat": "Hàng tháng",
+      "note": "Đóng định kỳ để phòng rủi ro"
+    }
+  ],
+  "chi_tieu_phat_sinh": 10,
+  "muc_tieu": "Tích lũy 100 triệu để tổ chức đám cưới cuối năm"
+}
