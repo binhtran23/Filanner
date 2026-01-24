@@ -1,0 +1,34 @@
+{
+  "user_id": 1,
+  "current_day": "Thứ ba, 24/01/2026",
+  "ho_ten": "Nguyễn Văn Khổng",
+  "gioi_tinh": "Nam",
+  "tuoi_tac": 23,
+  "nghe_nghiep": "Thất nghiệp / Đang tìm việc",
+  "tinh_trang_hon_nhan": "Độc thân",
+  "thu_nhap_hang_thang": 0,
+  "no": false,
+  "tong_no": null,
+  "chi_tieu_bat_buoc": [
+    {
+      "ten_chi_tieu": "Tiền ăn uống",
+      "uoc_tinh": 1500000,
+      "tan_suat": "Hàng tháng",
+      "note": "Ăn cơm nhà, hạn chế ăn ngoài tối đa"
+    },
+    {
+      "ten_chi_tieu": "Cước điện thoại/4G",
+      "uoc_tinh": 90000,
+      "tan_suat": "Hàng tháng",
+      "note": "Gói cước cơ bản để duy trì liên lạc"
+    },
+    {
+      "ten_chi_tieu": "Xăng xe",
+      "uoc_tinh": 200000,
+      "tan_suat": "Hàng tháng",
+      "note": "Chỉ đi lại khi cần thiết (phỏng vấn, việc gấp)"
+    }
+  ],
+  "chi_tieu_phat_sinh": 0,
+  "muc_tieu": null
+}

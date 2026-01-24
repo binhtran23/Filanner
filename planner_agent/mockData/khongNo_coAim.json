@@ -1,0 +1,36 @@
+{
+  "tuoi_tac": 24,
+  "nghe_nghiep": "Junior Data Analyst",
+  "tinh_trang_hon_nhan": "Độc thân",
+  "thu_nhap_hang_thang": 15000000,
+  "no": false,
+  "tong_no": null,
+  "chi_tieu_bat_buoc": [
+    {
+      "ten_chi_tieu": "Tiền thuê nhà + điện nước",
+      "uoc_tinh": 3500000,
+      "tan_suat": "Hàng tháng",
+      "note": "Ở ghép với bạn để share tiền phòng"
+    },
+    {
+      "ten_chi_tieu": "Ăn uống",
+      "uoc_tinh": 4000000,
+      "tan_suat": "Hàng tháng",
+      "note": "Tự nấu bữa tối, ăn trưa văn phòng"
+    },
+    {
+      "ten_chi_tieu": "Di chuyển (Xăng/Gửi xe)",
+      "uoc_tinh": 500000,
+      "tan_suat": "Hàng tháng",
+      "note": null
+    },
+    {
+      "ten_chi_tieu": "Đăng ký khóa học Online",
+      "uoc_tinh": 300000,
+      "tan_suat": "Hàng tháng",
+      "note": "Subscription các nền tảng học tập (Coursera/Udemy)"
+    }
+  ],
+  "chi_tieu_phat_sinh": 10,
+  "muc_tieu": "Mua Macbook Pro M3 để làm việc"
+}

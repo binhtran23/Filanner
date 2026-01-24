@@ -1,0 +1,60 @@
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model FinancePlan {
+  id        String   @id @default(uuid())
+  userId    Int
+  userName  String
+  
+  // Trường này để lưu toàn bộ JSON input (tuổi, nghề, chi tiêu...)
+  userInfo  Json?    
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  plans planExchange[]
+
+  @@index([userId])
+  @@map("finance_plan")
+}
+
+enum RequestStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model planExchange {
+  id             Int           @id @default(autoincrement())
+  
+  financePlanId  String
+  financePlan    FinancePlan   @relation(fields: [financePlanId], references: [id], onDelete: Cascade)
+  
+  // --- CONTENT ---
+  plan           String?       @db.Text
+
+  // --- METADATA & COST ---
+  responseTime   Int           // ms
+  successCode    Int           @default(200)
+  errorMessage   String?       @db.Text
+  
+  // Status nằm ở đây theo schema mới của bạn
+  status         RequestStatus @default(PENDING) 
+  
+  promptTokens   Int?
+  completionTokens Int?
+  totalTokens    Int?
+
+  createdAt      DateTime      @default(now())
+
+  @@index([financePlanId])
+}
