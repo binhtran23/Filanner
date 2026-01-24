@@ -3,21 +3,28 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   // Base URL - thay đổi theo môi trường
-  static const String baseUrl = 'http://localhost:8000/api/v1';
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://localhost:8000/api',
+  );
 
   // WebSocket URL
-  static const String wsUrl = 'ws://localhost:8000/ws';
+  static const String wsUrl = String.fromEnvironment(
+    'WS_URL',
+    defaultValue: 'ws://localhost:8000/ws',
+  );
 
   // Auth endpoints
   static const String login = '/auth/login';
-  static const String register = '/auth/register';
-  static const String refreshToken = '/auth/refresh';
-  static const String logout = '/auth/logout';
+  static const String register = '/auth/signup';
 
   // User Profile endpoints
   static const String profile = '/profile';
   static const String userProfiles = '/profile/user';
   static const String fixedExpenses = '/profile/fixed-expenses';
+
+  // Users
+  static String userById(String id) => '/users/$id';
 
   // Financial Data endpoints
   static const String transactions = '/transactions';

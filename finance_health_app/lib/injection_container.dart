@@ -65,12 +65,10 @@ Future<void> initDependencies() async {
   // Data Sources
   //============================================================
   // Remote
-  // TODO: Thay đổi về AuthRemoteDataSourceImpl khi backend đã sẵn sàng
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceMock(), // Sử dụng mock để test UI
-    // () => AuthRemoteDataSourceImpl(dioClient: sl()), // Uncomment khi backend ready
+    () => AuthRemoteDataSourceImpl(dioClient: sl()),
   );
-  // TODO: Thay đổi về ProfileRemoteDataSourceImpl khi backend đã sẵn sàng
+  // TODO: Chuyển sang ProfileRemoteDataSourceImpl khi backend hỗ trợ profile
   sl.registerLazySingleton<ProfileRemoteDataSource>(
     () => ProfileRemoteDataSourceMock(), // Sử dụng mock để test UI
     // () => ProfileRemoteDataSourceImpl(dioClient: sl()), // Uncomment khi backend ready

@@ -14,7 +14,7 @@ class UserModel extends User {
   /// Tạo UserModel từ JSON
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] as String,
+      id: json['id'].toString(),
       username: json['username'] as String,
       email: json['email'] as String,
       avatarUrl: json['avatar_url'] as String?,
@@ -54,19 +54,11 @@ class UserModel extends User {
 class LoginResponseModel {
   final UserModel user;
   final String accessToken;
-  final String refreshToken;
+  final String tokenType;
 
   const LoginResponseModel({
     required this.user,
     required this.accessToken,
-    required this.refreshToken,
+    required this.tokenType,
   });
-
-  factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
-    return LoginResponseModel(
-      user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
-      accessToken: json['access_token'] as String,
-      refreshToken: json['refresh_token'] as String,
-    );
-  }
 }
