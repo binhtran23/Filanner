@@ -51,22 +51,6 @@ services:
     # Chạy lệnh đơn giản nhất để start server
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
-  frontend:
-    build:
-      context: ./finance_health_app
-      dockerfile: Dockerfile
-      args:
-        API_BASE_URL: http://localhost:8000/api
-        WS_URL: ws://localhost:8000/ws
-    container_name: filanner_frontend
-    ports:
-      - "3000:80"
-    depends_on:
-      backend:
-        condition: service_started
-    networks:
-      - filanner-network
-
 networks:
   filanner-network:
     driver: bridge

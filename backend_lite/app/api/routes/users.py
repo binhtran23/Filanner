@@ -2,11 +2,22 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from app.db import get_session
-from app.models.users import User
+from app.models.users import User, Profile
 from app.models.auth import UserCreate, UserResponse
 from app.core.security import get_password_hash
 
 router = APIRouter()
+
+
+def _ensure_default_profile(session: Session, user_id):
+    profile = session.exec(select(Profile).where(Profile.user_id == user_id)).first()
+    if profile:
+        return profile
+    profile = Profile(user_id=user_id)
+    session.add(profile)
+    session.commit()
+    session.refresh(profile)
+    return profile
 
 # 1. API Tao User moi (POST /users)
 @router.post("/", response_model=UserResponse)
@@ -30,6 +41,7 @@ def create_user(user_in: UserCreate, session: Session = Depends(get_session)):
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
+    _ensure_default_profile(session, db_user.id)
     return db_user
 
 # 2. API Lay danh sach User (GET /users)

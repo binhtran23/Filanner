@@ -9,10 +9,21 @@ from sqlmodel import Session, select
 from app.db import get_session
 from app.core.security import verify_password, create_access_token_legacy, get_password_hash
 from app.core.config import settings
-from app.models.users import User
+from app.models.users import User, Profile
 from app.models.auth import Token, UserCreate, UserResponse
 
 router = APIRouter()
+
+
+def _ensure_default_profile(session: Session, user_id):
+    profile = session.exec(select(Profile).where(Profile.user_id == user_id)).first()
+    if profile:
+        return profile
+    profile = Profile(user_id=user_id)
+    session.add(profile)
+    session.commit()
+    session.refresh(profile)
+    return profile
 
 @router.post("/login", response_model=Token)
 async def login_access_token_json(
@@ -133,5 +144,7 @@ def register_user(
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
+
+    _ensure_default_profile(session, db_user.id)
     
     return db_user
